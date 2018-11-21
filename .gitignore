@@ -1,0 +1,7 @@
+.idea
+.vscode
+.tox
+scream.egg-info
+dist/
+build/
+venv

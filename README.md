@@ -1,5 +1,6 @@
 # Scream
-![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)
+![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 What you do when you see a bunch of python... packages.
 
@@ -16,7 +17,7 @@ Namespaces are defined according to python's [pkgutil-style](https://packaging.p
 ## Highlights
 
 - Creates a consistent blueprint for all packages in a single repository.
-    - Code re-use.
+    - Promotes code re-use.
     - Consistent Styling.
     - Consistent Testing / Linting / Docs.
 - Uses [tox](https://tox.readthedocs.io/en/latest/) to setup virtualenvs for tests.
@@ -26,9 +27,9 @@ Namespaces are defined according to python's [pkgutil-style](https://packaging.p
 ## Commands
 
 * `scream new <package_name>` - Creates new template package. 
-* `scream test [--dry-run][--all]` - Installs a subpackage.
-* `scream install <package_name>` - Test subpackages that have changed or who's dependencies have changed since master.
-* `scream build` - Run flake8 and tests against all subpackages.
+* `scream test [--dry-run][--all]` - Installs a package.
+* `scream install <package_name>` - Test packages that have changed or who's dependencies have changed since master.
+* `scream build` - Builds a python wheel and bundles it with all it's dependencies as wheels.
 
 ## Quickstart
 ```bash
@@ -74,7 +75,7 @@ pip install 'git+ssh://git@github.com/ORG/REPO.git@master#subdirectory=examplea'
 determines which versions of python your package will be tested against.
 
 
-## TODO Features
+## Upcoming Features
 
 - [ ] Auto version handling.
 - [ ] Pre commit hook to flake8.

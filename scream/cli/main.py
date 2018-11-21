@@ -19,7 +19,7 @@ USAGE = """scream <command> [<args>]
 
 Commands:
 * new <package_name>      - Creates new template package.
-* test [--dry-run][--all] - Test subpackages that have changed or who's dependencies have changed since master.
+* test [--dry-run][--all] - Test packages that have changed or who's dependencies have changed since master.
 * install <package_name>  - Installs a package.
 * build                   - Builds a python wheel and bundles it with all it's dependencies as wheels.
 """

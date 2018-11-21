@@ -1,5 +1,5 @@
 import os
-from scream.files.util import File
+from .util import File
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 README_DIR = os.path.join(ROOT_DIR, "README.md")

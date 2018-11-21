@@ -55,7 +55,7 @@ class Scream(object):
         if args.command != 'init':
             try:
                 self.monorepo = Monorepo(os.getcwd())
-            except FileNotFoundError:
+            except IOError:
                 sys.exit("Slow down partner, run `scream init` in an empty directory first.")
 
         getattr(self, args.command)()
@@ -94,7 +94,7 @@ class Scream(object):
 
         os.makedirs(d)
         with utils.chdir(d, cwd=self.monorepo.root_dir):
-            new_package(d, namespaces, package_name, self.monorepo.config)
+            new_package(d, namespaces, package_name)
             logging.info('Created project `{}`'.format(args.package_name))
 
         self.monorepo.sync()

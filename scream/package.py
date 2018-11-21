@@ -1,4 +1,7 @@
-import configparser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 import logging
 import os
 import sys
@@ -71,7 +74,7 @@ class Package:
                     dependencies.append(package)
                     dependencies.extend(package.dependencies)
 
-        except RecursionError:
+        except RuntimeError:
             sys.exit("Circular dependency detected!")
 
         return dependencies

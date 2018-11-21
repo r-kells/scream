@@ -1,7 +1,7 @@
-from scream.files.git import GitIgnore
-from scream.files.readme import PackageReadme, MonorepoReadme
-from scream.files.module import ModuleExample, TestExample
-from scream.files.scream import Scream
-from scream.files.setup import SetupCfg, SetupPy
-from scream.files.tox import Tox
-from scream.files.util import File
+from .git import GitIgnore
+from .readme import PackageReadme, MonorepoReadme
+from .module import ModuleExample, TestExample
+from .scream import Scream
+from .setup import SetupCfg, SetupPy
+from .tox import Tox
+from .util import File

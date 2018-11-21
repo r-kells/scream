@@ -5,30 +5,15 @@ from scream.files.util import File
 NAMESPACE_INIT = "__path__ = __import__('pkgutil').extend_path(__path__, __name__)\n"
 
 
-def new_package(d, namespaces, package_name, config):
+def new_package(d, namespaces, package_name):
     """
     Args:
         d (str): The new package dir.
         namespaces: (list)strings: names of the packages namspace(s).
         package_name (str): the package name.
-        config (dict): default settings used to configure the package creation.
 
     Example:
         scream new --name=example_pkg
-
-    \b
-    example_pkg
-    ├── namespace
-    │   └── example_pkg
-    │           └── main.py
-    │           └── __init__.py
-    │   └── __init__.py
-    ├── tests
-    │   └── __init__.py
-    │   └── test_main.py
-    ├── README.md
-    ├── setup.py
-    └── setup.cfg
     """
     # For differences in namespace package naming requirements see...
     # https://github.com/pypa/sample-namespace-packages/tree/master/pkgutil

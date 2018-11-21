@@ -14,7 +14,7 @@ def test(dry_run=False, all=False):
     """
     if all:
         logging.info("Testing all packages...")
-        subprocess.run(["tox"])
+        subprocess.call(["tox"])
         return
 
     impacted_packages = get_changed_packages_and_dependents()
@@ -33,4 +33,4 @@ def test(dry_run=False, all=False):
 
     toxenvs_to_test_str = ','.join(toxenvs_to_test_list)
 
-    subprocess.run(["tox", "-e", toxenvs_to_test_str])
+    subprocess.call(["tox", "-e", toxenvs_to_test_str])

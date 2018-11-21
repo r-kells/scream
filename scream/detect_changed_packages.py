@@ -34,9 +34,9 @@ def get_changed_packages():
     Returns:
         (set): a unique set local package names.
     """
-    parent_branch = subprocess.getoutput("detect_parent_branch.sh")
+    parent_branch = subprocess.check_output("detect_parent_branch.sh").strip()
     # subprocess.run("git fetch origin {branch}:origin/{branch}")
-    result = subprocess.getoutput("git diff --name-status {}".format(parent_branch))
+    result = subprocess.check_output(["git", "diff", "--name-status", parent_branch]).decode('utf-8')
     diffs = [diff.split('\t') for diff in result.splitlines()]
 
     packages_changed = {}

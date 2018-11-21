@@ -17,15 +17,7 @@ SCREAM_CONFIG_FILE = ".scream"
 
 
 def init_monorepo(root_dir):
-    """
-    \b
-    ├── example_pkg_a/
-    ├── example_pkg_b/
-    ├── example_pkg_c/
-    ├── .scream
-    ├── README.md
-    └── tox.ini
-    """
+
     # Can only initialize an empty directory, just to make sure you don't screw it up.
     files = os.listdir(root_dir)
 

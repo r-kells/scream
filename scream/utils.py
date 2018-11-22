@@ -2,7 +2,7 @@ import os
 
 from contextlib import contextmanager
 
-WHITELISTED_FILES = ['.git', '.idea', '.vscode', '.tox', 'wheelhouse']
+WHITELISTED_FILES = ['.git', '.idea', '.vscode', '.tox', 'wheelhouse', 'venv']
 
 
 @contextmanager

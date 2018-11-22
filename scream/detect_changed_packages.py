@@ -31,17 +31,21 @@ def get_changed_packages():
     Returns:
         (set): a unique set local package names.
     """
-    parent_branch = subprocess.check_output("detect_parent_branch.sh").strip()
+    parent_branch = subprocess.check_output("detect_parent_branch.sh").decode('utf-8')
+    if parent_branch == '':
+        # You are probably on master...
+        parent_branch = 'master'
     # subprocess.run("git fetch origin {branch}:origin/{branch}")
     try:
         result = subprocess.check_output(["git", "diff", "--name-status", parent_branch],
                                          stderr=subprocess.STDOUT).decode('utf-8')
     except subprocess.CalledProcessError as err:
-        if 'Not a git repository' in err.output:
+        if 'Not a git repository' in err.output.decode('utf-8'):
             sys.exit("No git repository detected. Scream uses git to determine "
                      "what packages have changed and require tests.")
         else:
-            sys.exit('Unknown git error: {}'.format(err.output))
+            logging.info(err.cmd)
+            sys.exit('Unknown git error: {}'.format(err.output.decode('utf-8')))
 
     diffs = [diff.split('\t') for diff in result.splitlines()]
 

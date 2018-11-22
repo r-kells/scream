@@ -60,7 +60,7 @@ class Scream(object):
 
         getattr(self, args.command)()
         # Exit after calling the matching class function
-        sys.exit(1)
+        sys.exit(0)
 
     # Once we're inside a subcommand, ignore the first
     # TWO argvs, ie the command (scream) and the subcommand (init).

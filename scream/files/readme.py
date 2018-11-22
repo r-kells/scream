@@ -27,7 +27,8 @@ print("Hello world!")
 
 MONOREPO_TEMPLATE = """\
 # Scream
-![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)
+![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
+![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 What you do when you see a bunch of python... packages.
@@ -61,6 +62,9 @@ Namespaces are defined according to python's
 * `scream build` - Builds a python wheel and bundles it with all it's dependencies as wheels.
 
 ## Quickstart
+> By default packages are tested against python 3.6.x, which means you have it available on your PATH.
+If you about different versions, please see the [configuration options](#Configuration).
+
 ```bash
 mkdir mymonorepo
 cd mymonorepo
@@ -99,9 +103,11 @@ dependency_links =
 pip install 'git+ssh://git@github.com/ORG/REPO.git@master#subdirectory=examplea' --process-dependency-links
 ```
 
-## Important User Configs
+## Configuration
 1. In your packages `setup.cfg` the variable `python_requires`
 determines which versions of python your package will be tested against.
+- Ex. python_requires = 2.7, 3.6, 3.7
+    >  Note: the python versions you intend to test must be available on your path.
 """
 
 

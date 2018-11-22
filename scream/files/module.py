@@ -1,4 +1,4 @@
-from scream.files.util import File
+from .util import File
 
 MODULE = """\
 def add_1(i):

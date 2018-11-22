@@ -1,9 +1,8 @@
 """
 TODO
-init creates gitnignore, hooks, and special 'scream' file to indicate the root dir
+githooks
 scream file also maintains list of packages? s
 scream can be a list of user settings.
-update tox file with new packages when they are added so testing is seamless
 """
 import logging
 import os
@@ -17,15 +16,7 @@ SCREAM_CONFIG_FILE = ".scream"
 
 
 def init_monorepo(root_dir):
-    """
-    \b
-    ├── example_pkg_a/
-    ├── example_pkg_b/
-    ├── example_pkg_c/
-    ├── .scream
-    ├── README.md
-    └── tox.ini
-    """
+
     # Can only initialize an empty directory, just to make sure you don't screw it up.
     files = os.listdir(root_dir)
 

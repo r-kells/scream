@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 
-from scream.package import Package
+from ..package import Package
 
 
 class NoMatchingDistributionException(Exception):
@@ -60,9 +60,9 @@ def _install_package(package):
 
 def run(cmd):
     try:
-        r = subprocess.check_output(cmd, stderr=subprocess.PIPE)
+        r = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         logging.info(r.decode("utf-8"))
     except subprocess.CalledProcessError as err:
-        err_str = err.stderr.decode("utf-8")
+        err_str = err.output.decode("utf-8")
         if "No matching distribution found" in err_str:
             raise NoMatchingDistributionException(err_str)

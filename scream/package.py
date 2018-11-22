@@ -1,4 +1,7 @@
-import configparser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 import logging
 import os
 import sys
@@ -31,7 +34,6 @@ class Package:
     def get_package_dir(package_name):
         """
         Generate the path with a packages source files.
-        If package_name is None, try to see if the cwd is a valid package.
 
         Args:
             package_name (str)
@@ -71,7 +73,7 @@ class Package:
                     dependencies.append(package)
                     dependencies.extend(package.dependencies)
 
-        except RecursionError:
+        except RuntimeError:
             sys.exit("Circular dependency detected!")
 
         return dependencies

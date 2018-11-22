@@ -1,7 +1,7 @@
 import os
 
 
-class File:
+class File(object):
     def __init__(self, file_name, contents, binary=False):
         self.file_name = file_name
         self.contents = contents

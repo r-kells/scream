@@ -1,10 +1,13 @@
-import configparser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 import logging
 import os
 
-from scream.package import Package, PackageDoesNotExistException
-from scream.files.util import File
-from scream.utils import WHITELISTED_FILES
+from ..package import Package, PackageDoesNotExistException
+from .util import File
+from ..utils import WHITELISTED_FILES
 
 
 TEMPLATE = """\
@@ -38,7 +41,7 @@ class Scream(File):
     def get_config(root_dir):
         config_path = os.path.join(root_dir, '.scream')
         if not os.path.isfile(config_path):
-            raise FileNotFoundError("{} does not contain a valid `.scream` file".format(root_dir))
+            raise IOError("{} does not contain a valid `.scream` file".format(root_dir))
 
         config = configparser.ConfigParser()
         config.read(config_path)

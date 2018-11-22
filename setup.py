@@ -27,6 +27,7 @@ setuptools.setup(
         )},
     scripts=['bin/detect_parent_branch.sh'],
     classifiers=[
+        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",

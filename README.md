@@ -33,8 +33,7 @@ Namespaces are defined according to python's [pkgutil-style](https://packaging.p
 * `scream build` - Builds a python wheel and bundles it with all it's dependencies as wheels.
 
 ## Quickstart
-> By default packages are tested against python 3.7.x, 
-which means you have it available on your PATH.
+> By default packages are tested against python 3.7.x, which means you have it available on your PATH.
 If you about different versions, please see the [configuration options](#Configuration).
 
 ```bash

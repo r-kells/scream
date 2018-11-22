@@ -31,7 +31,7 @@ def get_changed_packages():
     Returns:
         (set): a unique set local package names.
     """
-    parent_branch = subprocess.check_output("detect_parent_branch.sh").decode('utf-8')
+    parent_branch = subprocess.check_output("detect_parent_branch.sh").strip().decode('utf-8')
     if parent_branch == '':
         # You are probably on master...
         parent_branch = 'master'

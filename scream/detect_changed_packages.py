@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import sys
 
 from scream.package import Package, PackageDoesNotExistException
 
@@ -32,7 +33,16 @@ def get_changed_packages():
     """
     parent_branch = subprocess.check_output("detect_parent_branch.sh").strip()
     # subprocess.run("git fetch origin {branch}:origin/{branch}")
-    result = subprocess.check_output(["git", "diff", "--name-status", parent_branch]).decode('utf-8')
+    try:
+        result = subprocess.check_output(["git", "diff", "--name-status", parent_branch],
+                                         stderr=subprocess.STDOUT).decode('utf-8')
+    except subprocess.CalledProcessError as err:
+        if 'Not a git repository' in err.output:
+            sys.exit("No git repository detected. Scream uses git to determine "
+                     "what packages have changed and require tests.")
+        else:
+            sys.exit('Unknown git error: {}'.format(err.output))
+
     diffs = [diff.split('\t') for diff in result.splitlines()]
 
     packages_changed = {}

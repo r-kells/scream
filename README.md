@@ -1,6 +1,6 @@
 # Scream
-![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg) 
-![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg) 
+![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
+![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 What you do when you see a bunch of python... packages.
@@ -11,9 +11,10 @@ An opinionated CLI tool for Python monorepo MGMT.
 
 ---
 
-It's objective is to ease the creation, testing, and deploying of multiple python packages in a single repository. 
+It's objective is to ease the creation, testing, and deploying of multiple python packages in a single repository.
 To ensure non-overlapping names with PYPI, this tool forces you to use namespace packages.
-Namespaces are defined according to python's [pkgutil-style](https://packaging.python.org/guides/packaging-namespace-packages/#pkgutil-style-namespace-packages).
+Namespaces are defined according to python's
+[pkgutil-style](https://packaging.python.org/guides/packaging-namespace-packages/#pkgutil-style-namespace-packages).
 
 ## Why use Scream?
 
@@ -26,27 +27,29 @@ Namespaces are defined according to python's [pkgutil-style](https://packaging.p
 - Pre-commit hooks to help prevent those gosh darn mistakes.
 
 ### Other monorepos issues that scream tries to solve
-    
+
 1. Testing & CI/CD pipeline can become slow with many packages.
 
     The other available solutions are:
-    - Use a build tool like [Pants](https://www.pantsbuild.org/index.html) or [Bazel](https://bazel.build/). 
+    - Use a build tool like [Pants](https://www.pantsbuild.org/index.html) or [Bazel](https://bazel.build/).
 
-    These tools are extremely powerful, but often overkill, and introduce a fair amount of overhead to manage. 
+    These tools are extremely powerful, but often overkill, and introduce a fair amount of overhead to manage.
 
 2. Installing intra-monorepo package dependencies is hard with a private repositories.
-    
+
     The available solutions are:
     - Have all your packages distributed publically.
     - Host a private PYPI index.
     - pip install using [dependency links](https://python-packaging.readthedocs.io/en/latest/dependencies.html).
-    
+
 ### How scream works
-Scream aims to cause as little overhead as possible for managing your monorepo. No fancy third party configuration or private PYPI repositories.
+Scream aims to cause as little overhead as possible for managing your monorepo.
+No fancy third party configuration or private PYPI repositories.
 
-Scream uses the existing python packaging requirements to resolve intra-monorepo dependencies, and `git` to detect what's changed since the parent branch. 
+Scream uses the existing python packaging requirements to resolve intra-monorepo dependencies,
+and `git` to detect what's changed since the parent branch.
 
-For example: 
+For example:
 
 cat [setup.cfg](https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files).
 ```ini
@@ -74,13 +77,13 @@ Packages that require testing:
 
 ## Commands
 
-* `scream new <package_name>` - Creates new template package. 
+* `scream new <package_name>` - Creates new template package.
 * `scream test [--dry-run][--all]` - Tests packages and package dependents that have changed.
 * `scream install <package_name>` - Installs a package.
 * `scream build` - Builds a python wheel and bundles it with all it's dependencies as wheels.
 
 ## Quickstart
-> By default packages are tested against python 3.7.x, which means you have it available on your PATH.
+> By default packages are tested against python 3.6.x, which means you have it available on your PATH.
 If you about different versions, please see the [configuration options](#Configuration).
 
 ```bash
@@ -88,7 +91,7 @@ mkdir mymonorepo
 cd mymonorepo
 
 scream init
-> Done! 
+> Done!
 > Create a new package with `scream new <namespace>.<package_name>`
 
 scream new com.packagea
@@ -114,7 +117,7 @@ If your repository is *public*, you can simply install a subpackage anywhere usi
 pip install 'git+ssh://git@github.com/ORG/REPO.git@master#subdirectory=examplea'
 ```
 
-If your repository is *private*, 
+If your repository is *private*,
 you need a few extra steps to make sure packages that depend on other packages in this monorepo can be installed.
 
 1. Specify `dependency_links` in the `setup.cfg` for each 'local' dependency:
@@ -128,11 +131,10 @@ pip install 'git+ssh://git@github.com/ORG/REPO.git@master#subdirectory=examplea'
 ```
 
 ## Configuration
-1. In your packages `setup.cfg` the variable `python_requires` 
+1. In your packages `setup.cfg` the variable `python_requires`
 determines which versions of python your package will be tested against.
 - Ex. python_requires = 2.7, 3.6, 3.7
     >  Note: the python versions you intend to test must be available on your path.
-
 
 ## Upcoming Features
 

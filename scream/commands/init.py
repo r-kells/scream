@@ -1,9 +1,8 @@
 """
 TODO
-init creates gitnignore, hooks, and special 'scream' file to indicate the root dir
+githooks
 scream file also maintains list of packages? s
 scream can be a list of user settings.
-update tox file with new packages when they are added so testing is seamless
 """
 import logging
 import os

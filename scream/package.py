@@ -34,7 +34,6 @@ class Package:
     def get_package_dir(package_name):
         """
         Generate the path with a packages source files.
-        If package_name is None, try to see if the cwd is a valid package.
 
         Args:
             package_name (str)

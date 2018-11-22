@@ -101,7 +101,7 @@ class Scream(object):
 
     def test(self):
         # TODO don't test if simply README changed, etc.
-        # self.monorepo.sync()
+        self.monorepo.sync()
 
         parser = argparse.ArgumentParser()
         parser.add_argument('--dry-run', dest='dry_run', default=False, action='store_true')

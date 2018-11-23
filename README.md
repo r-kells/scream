@@ -26,14 +26,14 @@ Namespaces are defined according to python's
 - Uses [tox](https://tox.readthedocs.io/en/latest/) to setup virtualenvs for isolated testing across python versions.
 - Pre-commit hooks to help prevent those gosh darn mistakes.
 
-### Other monorepos issues that scream tries to solve
+### Other monorepo issues that scream tries to solve
 
 1. Testing & CI/CD pipeline can become slow with many packages.
 
     The other available solutions are:
     - Use a build tool like [Pants](https://www.pantsbuild.org/index.html) or [Bazel](https://bazel.build/).
 
-    These tools are extremely powerful, but often overkill, and introduce a fair amount of overhead to manage.
+    These tools are extremely powerful, but sometimes are overkill, and introduce a fair amount of overhead to manage.
 
 2. Installing intra-monorepo package dependencies is hard with a private repositories.
 

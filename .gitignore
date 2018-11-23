@@ -1,6 +1,7 @@
 .idea
-.vscode
+.python-version
 .tox
+.vscode
 scream.egg-info
 dist/
 build/

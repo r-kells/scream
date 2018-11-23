@@ -4,6 +4,7 @@ TEMPLATE = """\
 build/
 .cache/
 .coverage
+.python-version
 dist/
 docs/build/
 .DS_Store

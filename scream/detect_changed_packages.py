@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import sys 
 
 from scream.package import Package, PackageDoesNotExistException
 

@@ -1,6 +1,5 @@
 import logging
 import subprocess
-import sys
 
 from scream.detect_changed_packages import get_changed_packages_and_dependents
 

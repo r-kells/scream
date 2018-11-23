@@ -33,4 +33,4 @@ def init_monorepo(root_dir):
     GitIgnore().write(root_dir)
     Tox(packages=[]).write(root_dir)
 
-    logging.info("Done! Create a new package with `scream new <namespace>.<package_name>`")
+    logging.info("Done!\nCreate a new package with `scream new <namespace>.<package_name>`")

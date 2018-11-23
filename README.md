@@ -16,6 +16,17 @@ To ensure non-overlapping names with PYPI, this tool forces you to use namespace
 Namespaces are defined according to python's
 [pkgutil-style](https://packaging.python.org/guides/packaging-namespace-packages/#pkgutil-style-namespace-packages).
 
+
+- [Scream](#scream)
+    - [Why use Scream?](#why-use-scream)
+        - [Problems with most monorepos](#problems-with-most-monorepos)
+        - [How scream works](#how-scream-works)
+    - [Commands](#commands)
+    - [Quickstart](#quickstart)
+    - [Using your monorepo packages](#using-your-monorepo-packages)
+    - [Configuration](#configuration)
+    - [Upcoming Features](#upcoming-features)
+
 ## Why use Scream?
 
 - Scream holds all packages to the same standards
@@ -26,7 +37,7 @@ Namespaces are defined according to python's
 - Uses [tox](https://tox.readthedocs.io/en/latest/) to setup virtualenvs for isolated testing across python versions.
 - Pre-commit hooks to help prevent those gosh darn mistakes.
 
-### Other monorepo issues that scream tries to solve
+### Problems with most monorepos
 
 1. Testing & CI/CD pipeline can become slow with many packages.
 

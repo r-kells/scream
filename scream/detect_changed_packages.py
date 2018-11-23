@@ -1,6 +1,5 @@
 import logging
 import subprocess
-import sys
 
 from scream.package import Package, PackageDoesNotExistException
 
@@ -22,6 +21,9 @@ def get_changed_packages_and_dependents():
         for dependency in package.dependencies:
             impacted_packages.update({dependency.package_name: dependency})
 
+    if impacted_packages:
+        logging.info("Packages that require testing:\n\t{}".format('\n\t'.join(list(impacted_packages.keys()))))
+
     return impacted_packages
 
 
@@ -33,19 +35,20 @@ def get_changed_packages():
     """
     parent_branch = subprocess.check_output("detect_parent_branch.sh").strip().decode('utf-8')
     if parent_branch == '':
-        # You are probably on master...
-        parent_branch = 'master'
+        parent_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode('utf-8')
+
     # subprocess.run("git fetch origin {branch}:origin/{branch}")
     try:
         result = subprocess.check_output(["git", "diff", "--name-status", parent_branch],
                                          stderr=subprocess.STDOUT).decode('utf-8')
     except subprocess.CalledProcessError as err:
-        if 'Not a git repository' in err.output.decode('utf-8'):
-            sys.exit("No git repository detected. Scream uses git to determine "
+        err_out = err.output.decode("utf-8")
+
+        if 'Not a git repository' in err_out:
+            sys.exit("\nNo git repository detected!\nScream uses git to determine "
                      "what packages have changed and require tests.")
         else:
-            logging.info(err.cmd)
-            sys.exit('Unknown git error: {}'.format(err.output.decode('utf-8')))
+            sys.exit('\nUnknown git error: {}'.format(err_out))
 
     diffs = [diff.split('\t') for diff in result.splitlines()]
 

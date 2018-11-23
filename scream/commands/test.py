@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import sys
 
 from scream.detect_changed_packages import get_changed_packages_and_dependents
 
@@ -19,10 +20,7 @@ def test(dry_run=False, all=False):
 
     impacted_packages = get_changed_packages_and_dependents()
 
-    if impacted_packages:
-        logging.info("Packages that require testing:\n\t{}".format('\n\t'.join(list(impacted_packages.keys()))))
-
-    if dry_run:
+    if dry_run or not impacted_packages:
         return
 
     toxenvs_to_test_list = []

@@ -1,8 +1,11 @@
 import logging
+import os
 import subprocess
-import sys 
+import sys
 
 from scream.package import Package, PackageDoesNotExistException
+
+devnull = open(os.devnull, 'w')
 
 
 def get_changed_packages_and_dependents():
@@ -23,7 +26,8 @@ def get_changed_packages_and_dependents():
             impacted_packages.update({dependency.package_name: dependency})
 
     if impacted_packages:
-        logging.info("Packages that require testing:\n\t{}".format('\n\t'.join(list(impacted_packages.keys()))))
+        logging.info("Packages that require testing:\n\t{}".format('\n\t'.join(
+            list(impacted_packages.keys()))))
 
     return impacted_packages
 
@@ -34,25 +38,34 @@ def get_changed_packages():
     Returns:
         (set): a unique set local package names.
     """
-    parent_branch = subprocess.check_output("detect_parent_branch.sh").strip().decode('utf-8')
-    if parent_branch == '':
-        parent_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip().decode('utf-8')
-
     # subprocess.run("git fetch origin {branch}:origin/{branch}")
-    try:
-        result = subprocess.check_output(["git", "diff", "--name-status", parent_branch],
-                                         stderr=subprocess.STDOUT).decode('utf-8')
-    except subprocess.CalledProcessError as err:
-        err_out = err.output.decode("utf-8")
 
-        if 'Not a git repository' in err_out:
-            sys.exit("\nNo git repository detected!\nScream uses git to determine "
-                     "what packages have changed and require tests.")
-        else:
-            sys.exit('\nUnknown git error: {}'.format(err_out))
+    parent_branch = get_parent_branch()
+    changed_files = get_changed_files(parent_branch)
 
-    diffs = [diff.split('\t') for diff in result.splitlines()]
+    packages_changed = get_unique_changed_packages(changed_files)
 
+    if packages_changed:
+        logging.info(
+            "The following packages have changes compared since branch: `{parent_branch}`:\n\t{packages}\n".format(
+                parent_branch=parent_branch,
+                packages='\n\t'.join(list(packages_changed.keys()))
+            )
+        )
+    else:
+        logging.info(
+            'Either nothing has changed, or there are no valid packages in your current directory.'
+        )
+
+    return packages_changed
+
+
+def parse_git_diff(changed_files):
+    files = [f.split('\t') for f in changed_files.splitlines()]
+    return files
+
+
+def get_unique_changed_packages(diffs):
     packages_changed = {}
 
     for change in diffs:
@@ -69,12 +82,34 @@ def get_changed_packages():
         if package.package_name not in packages_changed:
             packages_changed.update({package.package_name: package})
 
-    if packages_changed:
-        logging.info(
-            "The following packages have changes compared since branch: `{parent_branch}`:\n\t{packages}\n".format(
-                parent_branch=parent_branch,
-                packages='\n\t'.join(list(packages_changed.keys()))))
-    else:
-        logging.info('Either nothing has changed, or there are no valid packages in your current directory.')
-
     return packages_changed
+
+
+def get_changed_files(parent_branch):
+    try:
+        result = subprocess.check_output(
+            ["git", "diff", "--name-status", parent_branch],
+            stderr=subprocess.STDOUT).decode('utf-8')
+
+    except subprocess.CalledProcessError as err:
+        err_out = err.output.decode("utf-8")
+        sys.exit('\nUnknown git error: {}'.format(err_out))
+    else:
+        logging.info(result)
+        changed_files = parse_git_diff(result)
+
+    return changed_files
+
+
+def get_parent_branch():
+    parent_branch = subprocess.check_output(
+        "detect_parent_branch.sh", stderr=devnull).strip().decode('utf-8')
+
+    if parent_branch == '':
+        # If no parent branch, get current branch at least
+        parent_branch = subprocess.check_output(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            stderr=devnull,
+        ).strip().decode('utf-8')
+
+    return parent_branch

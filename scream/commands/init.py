@@ -6,6 +6,7 @@ scream can be a list of user settings.
 """
 import logging
 import os
+import subprocess
 import sys
 
 from scream.files import GitIgnore, File, MonorepoReadme, Tox
@@ -32,5 +33,7 @@ def init_monorepo(root_dir):
     MonorepoReadme().write(root_dir)
     GitIgnore().write(root_dir)
     Tox(packages=[]).write(root_dir)
+
+    subprocess.call(["git", "init"])
 
     logging.info("Done!\nCreate a new package with `scream new <namespace>.<package_name>`")

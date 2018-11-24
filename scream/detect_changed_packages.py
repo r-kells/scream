@@ -47,8 +47,7 @@ def get_changed_packages():
 
     if packages_changed:
         logging.info(
-            "The following packages have changes compared since branch: `{parent_branch}`:\n\t{packages}\n"
-                .format(
+            "The following packages have changes compared since branch: `{parent_branch}`:\n\t{packages}\n".format(
                 parent_branch=parent_branch,
                 packages='\n\t'.join(list(packages_changed.keys()))
             )

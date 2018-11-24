@@ -8,10 +8,6 @@ from scream.package import Package, PackageDoesNotExistException
 devnull = open(os.devnull, 'w')
 
 
-class GitNoBranchHistoryException(Exception):
-    pass
-
-
 def get_changed_packages_and_dependents():
     """A helper function that gets the subpackages that need to be tested or built or deployed.
 

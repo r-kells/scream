@@ -35,7 +35,5 @@ def init_monorepo(root_dir):
     Tox(packages=[]).write(root_dir)
 
     subprocess.call(["git", "init"])
-    subprocess.call(["git", "add", "."])
-    subprocess.call(["git", "commit", "-m", "init monorepo!"])
 
     logging.info("Done!\nCreate a new package with `scream new <namespace>.<package_name>`")

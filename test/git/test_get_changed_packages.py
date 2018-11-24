@@ -21,6 +21,11 @@ class TestChangedPackages(unittest.TestCase):
         os.mkdir(TMP_DIR)
         with chdir(TMP_DIR):
             scream.init_monorepo(TMP_DIR)
+            subprocess.call(["git", "config", "user.email", "ryan.kelly.md@gmail.com"])
+            subprocess.call(["git", "config", "user.name", "Ryan Kelly"])
+
+            subprocess.call(["git", "add", "."])
+            subprocess.call(["git", "commit", "-m", "init monorepo!"])
 
     @classmethod
     def tearDown(cls):

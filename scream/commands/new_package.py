@@ -6,7 +6,7 @@ NAMESPACE_INIT = "__path__ = __import__('pkgutil').extend_path(__path__, __name_
 
 
 def new_package(d, namespaces, package_name):
-    """
+    """Creates a new package inside a directory `d`.
     Args:
         d (str): The new package dir.
         namespaces: (list)strings: names of the packages namspace(s).

@@ -12,7 +12,7 @@ devnull = open(os.devnull, 'w')
 
 class NoGitException(Exception):
     """
-    Raised when there is no git repo detected
+    Raised when there is no git repo detected.
     """
     pass
 

@@ -1,8 +1,6 @@
 """
 TODO
 githooks
-scream file also maintains list of packages? s
-scream can be a list of user settings.
 """
 import logging
 import os
@@ -17,7 +15,13 @@ SCREAM_CONFIG_FILE = ".scream"
 
 
 def init_monorepo(root_dir):
+    """
+    Args:
+        root_dir (str): a path indicating the desired new monorepo location
 
+    Returns:
+        Creates dirs and files to initialize a mock new monorepo
+    """
     # Can only initialize an empty directory, just to make sure you don't screw it up.
     files = os.listdir(root_dir)
 
@@ -32,7 +36,7 @@ def init_monorepo(root_dir):
 
     MonorepoReadme().write(root_dir)
     GitIgnore().write(root_dir)
-    Tox(packages=[]).write(root_dir)
+    Tox().write(root_dir)
 
     subprocess.call(["git", "init"])
 

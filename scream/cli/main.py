@@ -9,12 +9,7 @@ from scream import utils
 from scream.commands import install, init_monorepo, new_package, test
 from scream.detect_changed_packages import NoGitException
 from scream.monorepo import Monorepo
-from scream.package import PackageDoesNotExistException
-
-NAMESPACE_DELIM = '.'
-NAMESPACE_HELP_URL = 'https://github.com/pypa/sample-namespace-packages/tree/master/pkgutil'
-
-INVALID_PACKAGE_NAME_CHARS = ['_']
+from scream.package import PackageDoesNotExistException, PackageNamingException, validate_package_name
 
 DESCRIPTION = "An opinionated CLI tool for Python monorepo MGMT."
 USAGE = """scream <command> [<args>]
@@ -79,16 +74,10 @@ class Scream(object):
         parser.add_argument('package_name')
         args = parser.parse_args(sys.argv[2:])
 
-        # TODO move into Package class
-        if NAMESPACE_DELIM not in args.package_name:
-            sys.exit("Packages must be namespace packages: <namespace(s)>.<packagename>\n{}".format(
-                NAMESPACE_HELP_URL))
-
-        package_name = args.package_name.split(NAMESPACE_DELIM)[-1]
-        if any([char in package_name for char in INVALID_PACKAGE_NAME_CHARS]):
-            sys.exit("Packages must not contain any of: '{}'".format(','.join(INVALID_PACKAGE_NAME_CHARS)))
-
-        namespaces = args.package_name.split(NAMESPACE_DELIM)[:-1]
+        try:
+            namespaces, package_name = validate_package_name(args.package_name)
+        except PackageNamingException as err:
+            sys.exit(err)
 
         d = os.path.join(self.monorepo.root_dir, package_name)
         if os.path.exists(d):
@@ -130,9 +119,8 @@ class Scream(object):
         parser.add_argument('package_name')
         args = parser.parse_args(sys.argv[2:])
 
-        package_name = args.package_name
         try:
-            install(package_name)
+            install(args.package_name)
         except PackageDoesNotExistException:
             logging.error("Package doesn't exit. Packages are named '<namespace(s)>_<name>'")
             sys.exit(1)

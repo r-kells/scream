@@ -11,7 +11,7 @@ class NoMatchingDistributionException(Exception):
 
 def install(package):
     """
-    Installs individual subpackages and caches them as wheels in the `wheelhouse` dir.
+    Installs individual packages and their dependents then caches them as wheels in the `wheelhouse` dir.
 
     Args:
         package (str): A local package name. Ex: `company_examplea`.
@@ -46,8 +46,6 @@ def _install_package(package):
     """
     wheelhouse_dir = os.path.join(os.path.dirname(package.package_dir), "wheelhouse")
 
-    # develop_cmd = "-f " if develop else ""
-
     create_wheel_cmd = ["pip", "wheel", "-f", wheelhouse_dir, "-w", wheelhouse_dir, package.package_dir]
     install_cmd = ["pip", "install", "-f", wheelhouse_dir, package.package_name]
 
@@ -59,6 +57,15 @@ def _install_package(package):
 
 
 def run(cmd):
+    """A helper to run and catch installation errors.
+    Args:
+        cmd (list): a set of commands to run in the shell.
+
+    Returns:
+        Executes the `cmd`
+    Raises:
+        NoMatchingDistributionException
+    """
     try:
         r = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         logging.info(r.decode("utf-8"))

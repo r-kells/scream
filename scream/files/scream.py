@@ -5,10 +5,9 @@ except ImportError:
 import logging
 import os
 
-from ..package import Package, PackageDoesNotExistException
 from .util import File
+from ..package import Package, PackageDoesNotExistException
 from ..utils import WHITELISTED_FILES
-
 
 TEMPLATE = """\
 [scream]
@@ -18,10 +17,13 @@ TEMPLATE = """\
 class Scream(File):
     """
     This class knows how to write and fetch configs from the .scream config file.
+    It is used for initializing and maintaining configurations.
     """
 
     def __init__(self, root_dir):
         """
+        Args:
+            root_dir (str): The directory of a valid scream monorepo.
         """
         self.root_dir = root_dir
         self.config = self.get_config(root_dir)['scream']

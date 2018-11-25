@@ -6,8 +6,16 @@ import logging
 import os
 import sys
 
+NAMESPACE_DELIM = '.'
+NAMESPACE_HELP_URL = 'https://github.com/pypa/sample-namespace-packages/tree/master/pkgutil'
+INVALID_PACKAGE_NAME_CHARS = ['_']
+
 
 class PackageDoesNotExistException(Exception):
+    pass
+
+
+class PackageNamingException(Exception):
     pass
 
 
@@ -109,3 +117,20 @@ class Package:
     def get_tox_pyversions(self):
         versions = self.get_python_versions()
         return ["py{}".format(v.replace('.', '')) for v in versions]
+
+
+def validate_package_name(name):
+    if NAMESPACE_DELIM not in name:
+        raise PackageNamingException(
+            "Packages must be namespace packages: <namespace(s)>.<packagename>\n{}".format(
+                NAMESPACE_HELP_URL))
+
+    package_name = name.split(NAMESPACE_DELIM)[-1]
+    if any([char in package_name for char in INVALID_PACKAGE_NAME_CHARS]):
+        sys.exit("Packages must not contain any of: '{}'".format(','.join(INVALID_PACKAGE_NAME_CHARS)))
+
+    tokens = name.split(NAMESPACE_DELIM)
+    namespaces = tokens[:-1]
+    package_name = tokens[-1]
+
+    return namespaces, package_name

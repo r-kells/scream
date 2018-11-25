@@ -52,13 +52,15 @@ class TestPackages(Base.TestNewMonorepoGitInit):
         package_b = MyPackage(self.TMP_DIR, "packageb")
         package_a = MyPackage(self.TMP_DIR, "packagea")
 
-        SetupCfg(package_a.full_name, dependencies=[package_b.full_name]).write(package_a.package_dir)
+        SetupCfg(package_a.full_name, dependencies=[package_b.full_name, package_c.full_name]).write(
+            package_a.package_dir)
         SetupCfg(package_b.full_name, dependencies=[package_c.full_name]).write(package_b.package_dir)
         SetupCfg(package_c.full_name).write(package_c.package_dir)
 
         with chdir(self.TMP_DIR):
             a_dependencies = Package(package_name=package_a.full_name).get_dependents(package_a.package_dir)
             self.assertEqual(a_dependencies[0].package_name, "company_packageb")
+            self.assertEqual(a_dependencies[1].package_name, "company_packagec")
 
     def test_resolve_dependencies_depends_on_itself(self):
         package_a = MyPackage(self.TMP_DIR, "packagea")

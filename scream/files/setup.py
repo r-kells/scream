@@ -40,6 +40,7 @@ class SetupCfg(File):
 
     def __init__(self, package_name, dependencies=None):
         self.package_name = package_name
+
         if dependencies is None:
             self.install_requires = "# install_requires =\n    # company_package"
         else:

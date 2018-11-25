@@ -104,7 +104,6 @@ def get_changed_files(parent_branch):
         err_out = err.output.decode("utf-8")
         sys.exit('\nUnknown git error: {}'.format(err_out))
     else:
-        logging.info(result)
         changed_files = parse_git_diff(result)
 
     return changed_files

@@ -17,7 +17,13 @@ SCREAM_CONFIG_FILE = ".scream"
 
 
 def init_monorepo(root_dir):
+    """
+    Args:
+        root_dir (str): a path indicating the desired new monorepo location
 
+    Returns:
+        Creates dirs and files to initialize a mock new monorepo
+    """
     # Can only initialize an empty directory, just to make sure you don't screw it up.
     files = os.listdir(root_dir)
 

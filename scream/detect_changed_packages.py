@@ -6,6 +6,7 @@ import sys
 from scream.package import Package, PackageDoesNotExistException
 
 NO_GIT_ERROR_CODE = 128
+IGNORE_CHANGES_FILES = ['README.md']
 
 devnull = open(os.devnull, 'w')
 
@@ -79,11 +80,19 @@ def get_unique_changed_packages(diffs):
 
     for change in diffs:
         if len(change) != 2:
+            logging.debug(change)
             continue
 
         change_type, path = change
+
+        path_tokens = path.split('/')
+
+        # If these files change we should not re-test.
+        if path_tokens[-1] in IGNORE_CHANGES_FILES:
+            continue
+
         try:
-            package = Package(package_dir=path.split('/')[0])
+            package = Package(package_dir=path_tokens[0])
         except PackageDoesNotExistException:
             continue
 

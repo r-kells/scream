@@ -103,7 +103,7 @@ install_requires =
 ```
 If you make a change to `company_packageA` then run tests...
 ```bash
-scream test --dry-run
+> scream test --dry-run
 
 The following packages have changes compared since branch: `master`:
         company_packagea
@@ -125,23 +125,23 @@ Packages that require testing:
 If you about different versions, please see the [configuration options](#Configuration).
 
 ```bash
-mkdir mymonorepo
-cd mymonorepo
+> mkdir mymonorepo
+> cd mymonorepo
 
-scream init
-> Done!
-> Create a new package with `scream new <namespace>.<package_name>`
+> scream init
+Done!
+Create a new package with `scream new <namespace>.<package_name>`
 
-scream new com.packagea
-> Created project `com.packagea`
+> scream new com.packagea
+Created project `com.packagea`
 
-scream new com.packageb
-> Created project `com.packageb`
+> scream new com.packageb
+Created project `com.packageb`
 
-scream test --all
-> Running tests...
+> scream test --all
+Running tests...
 
-coverage report
+> coverage report
 ```
 
 ## Using your monorepo packages

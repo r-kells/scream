@@ -4,9 +4,9 @@ except ImportError:
     import ConfigParser as configparser
 import os
 
-import scream.cli.main as scream
-from scream import utils
+from scream.files.setup import SetupCfg
 from scream.package import Package
+from scream.utils import chdir
 from test.base_tests import Base
 
 
@@ -18,25 +18,56 @@ class MockPackage(Package):
         pass
 
 
-class TestChangedPackages(Base.TestNewMonorepoGitInit):
+class MyPackage(object):
+    def __init__(self, d, name):
+        self.name = name
+        self.namespaces = 'company'
 
-    @classmethod
-    def setUp(cls):
-        super(TestChangedPackages, cls).setUp()
+        self.package_dir = os.path.join(d, self.name)
 
-        cls.package_name = "packagea"
-        cls.namespaces = ["company"]
-        cls.package_dir = os.path.join(cls.TMP_DIR, cls.package_name)
+        self.full_name = self.namespaces + '_' + self.name
 
-        with utils.chdir(cls.TMP_DIR):
-            # Add a package.
-            scream.new_package(
-                cls.package_dir,
-                namespaces=cls.namespaces,
-                package_name=cls.package_name)
 
-    def test_get_configs_bad_dir(self):
-        self.assertEqual(MockPackage().get_cfg('tmp'), None)
+class TestPackages(Base.TestNewMonorepoGitInit):
 
     def test_get_configs(self):
-        self.assertIsInstance(MockPackage().get_cfg(self.package_dir), configparser.ConfigParser)
+        package_a = MyPackage(self.TMP_DIR, "packagea")
+
+        with chdir(self.TMP_DIR):
+            os.mkdir(package_a.name)
+            SetupCfg(package_a.full_name).write(package_a.package_dir)
+
+            self.assertIsInstance(MockPackage().get_cfg(package_a.package_dir), configparser.ConfigParser)
+
+    def test_resolve_dependencies(self):
+        package_b = MyPackage(self.TMP_DIR, "packageb")
+        package_a = MyPackage(self.TMP_DIR, "packagea")
+
+        SetupCfg(package_a.full_name, dependencies=[package_b.full_name]).write(package_a.package_dir)
+        SetupCfg(package_b.full_name).write(package_b.package_dir)
+
+        with chdir(self.TMP_DIR):
+            a_dependencies = Package(package_name=package_a.full_name).get_dependents(package_a.package_dir)
+            self.assertEqual(a_dependencies[0].package_name, "company_packageb")
+
+    def test_resolve_dependencies_depends_on_itself(self):
+        package_a = MyPackage(self.TMP_DIR, "packagea")
+
+        SetupCfg(package_a.full_name, dependencies=[package_a.full_name]).write(package_a.package_dir)
+
+        with chdir(self.TMP_DIR):
+            with self.assertRaises(SystemExit) as err:
+                Package(package_name=package_a.full_name).get_dependents(package_a.package_dir)
+            self.assertTrue('is dependent on itself' in err.exception.args[0])
+
+    def test_resolve_circular_dependencies(self):
+        package_b = MyPackage(self.TMP_DIR, "packageb")
+        package_a = MyPackage(self.TMP_DIR, "packagea")
+
+        SetupCfg(package_a.full_name, dependencies=[package_b.full_name]).write(package_a.package_dir)
+        SetupCfg(package_b.full_name, dependencies=[package_a.full_name]).write(package_b.package_dir)
+
+        with chdir(self.TMP_DIR):
+            with self.assertRaises(SystemExit) as err:
+                Package(package_name=package_a.full_name).get_dependents(package_a.package_dir)
+            self.assertTrue("Circular dependency detected!" in err.exception.args[0])

@@ -1,8 +1,6 @@
 """
 TODO
 githooks
-scream file also maintains list of packages? s
-scream can be a list of user settings.
 """
 import logging
 import os

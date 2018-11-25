@@ -42,9 +42,9 @@ class SetupCfg(File):
         self.package_name = package_name
 
         if dependencies is None:
-            self.install_requires = "# install_requires =\n    # company_package"
+            self.install_requires = "# install_requires = company_package"
         else:
-            self.install_requires = self.install_requires_tmp.format("    \n".join(dependencies))
+            self.install_requires = self.install_requires_tmp.format("\n    ".join(dependencies))
 
         super(SetupCfg, self).__init__(
             'setup.cfg',

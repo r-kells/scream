@@ -1,11 +1,17 @@
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 import os
 import shutil
 import subprocess
+import sys
 import unittest
 
 import scream.cli.main as scream
-from scream.utils import chdir
 from scream import detect_changed_packages
+from scream.utils import chdir
 
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TMP_DIR = os.path.join(PARENT_DIR, 'tmp')
@@ -21,6 +27,7 @@ class TestChangedPackages(unittest.TestCase):
         os.mkdir(TMP_DIR)
         with chdir(TMP_DIR):
             scream.init_monorepo(TMP_DIR)
+            # The user is required to setup git to get the most out of `scream test` and `scream build`.
             subprocess.call(["git", "config", "user.email", "ryan.kelly.md@gmail.com"])
             subprocess.call(["git", "config", "user.name", "Ryan Kelly"])
 
@@ -83,3 +90,29 @@ class TestChangedPackages(unittest.TestCase):
         expected = [['A', "packagea/README.md"], ["A", "packageb/README.md"]]
         actual = detect_changed_packages.parse_git_diff(input_example)
         self.assertEqual(expected, actual)
+
+
+class NoGitCommitsYetTestChangedPackages(unittest.TestCase):
+    """
+    Runs some tests to make sure nothing breaks prior to a user initializing a git repo.
+    """
+
+    @classmethod
+    def setUp(cls):
+        if os.path.isdir(TMP_DIR):
+            shutil.rmtree(TMP_DIR)
+
+        os.mkdir(TMP_DIR)
+        with chdir(TMP_DIR):
+            scream.init_monorepo(TMP_DIR)
+
+    @classmethod
+    def tearDown(cls):
+        if os.path.isdir(TMP_DIR):
+            shutil.rmtree(TMP_DIR)
+
+    def test_scream_test_gracefully_handle_no_git(self):
+        with chdir(TMP_DIR):
+            with mock.patch.object(sys, "argv", ["scream", "test"]):
+                with self.assertRaises(SystemExit):
+                    scream.Scream()

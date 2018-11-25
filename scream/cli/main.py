@@ -7,6 +7,7 @@ import sys
 
 from scream import utils
 from scream.commands import install, init_monorepo, new_package, test
+from scream.detect_changed_packages import NoGitException
 from scream.monorepo import Monorepo
 
 NAMESPACE_DELIM = '.'
@@ -27,7 +28,7 @@ Commands:
 logger = logging.getLogger()
 handler = logging.StreamHandler()
 
-formatter = logging.Formatter("%(message)s")
+formatter = logging.Formatter("%(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
@@ -100,16 +101,27 @@ class Scream(object):
         self.monorepo.sync()
 
     def test(self):
+        help = "Tests packages that have changed compared to the parent branch."
         # TODO don't test if simply README changed, etc.
         self.monorepo.sync()
 
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--package-name', dest='package_name')
-        parser.add_argument('--dry-run', dest='dry_run', default=False, action='store_true')
-        parser.add_argument('--all', dest='all', default=False, action='store_true')
+        parser = argparse.ArgumentParser(description=help)
+        parser.add_argument('--name', dest='name',
+                            help="Test this package, regardless of git status.")
+        parser.add_argument('--dry-run', dest='dry_run', default=False, action='store_true',
+                            help="Print what would be tested, but don't run tests.")
+        parser.add_argument('--all', dest='all', default=False, action='store_true',
+                            help="Test all packages, ragardless of git status.")
         args = parser.parse_args(sys.argv[2:])
 
-        test(package_name=args.package_name, dry_run=args.dry_run, all=args.all)
+        try:
+            test(package_name=args.name, dry_run=args.dry_run, all=args.all)
+        except NoGitException:
+            logging.warning("`git` repository has nothing to compare.\n\n"
+                            "Please make your first commit then try again, "
+                            "or try using one of the flags below.\n")
+            parser.print_help()
+            return
 
     def install(self):
         parser = argparse.ArgumentParser()
@@ -118,7 +130,6 @@ class Scream(object):
 
         package_name = args.package_name
         install(package_name)
-        sys.exit(0)
 
     # def build(self):
     #     parser = argparse.ArgumentParser(description='help')

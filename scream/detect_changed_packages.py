@@ -5,7 +5,16 @@ import sys
 
 from scream.package import Package, PackageDoesNotExistException
 
+NO_GIT_ERROR_CODE = 128
+
 devnull = open(os.devnull, 'w')
+
+
+class NoGitException(Exception):
+    """
+    Raised when there is no git repo detected
+    """
+    pass
 
 
 def get_changed_packages_and_dependents():
@@ -107,9 +116,15 @@ def get_parent_branch():
 
     if parent_branch == '':
         # If no parent branch, get current branch at least
-        parent_branch = subprocess.check_output(
-            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
-            stderr=devnull,
-        ).strip().decode('utf-8')
+        try:
+            parent_branch = subprocess.check_output(
+                ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                stderr=devnull,
+            ).strip().decode('utf-8')
+        except subprocess.CalledProcessError as err:
+            if err.returncode == NO_GIT_ERROR_CODE:
+                raise NoGitException
+            else:
+                raise
 
     return parent_branch

@@ -152,4 +152,3 @@ determines which versions of python your package will be tested against.
 - [ ] Auto version handling.
 - [ ] Pre commit hook to flake8.
 - [ ] Pre commit hook to avoid committing a large file.
-- [ ] Docs builder

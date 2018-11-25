@@ -1,3 +1,4 @@
+from .docs import Docs
 from .git import GitIgnore
 from .module import ModuleExample, TestExample
 from .readme import PackageReadme, MonorepoReadme

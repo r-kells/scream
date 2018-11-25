@@ -38,6 +38,8 @@ or...
 
 An opinionated CLI tool for Python monorepo MGMT.
 
+### Link to all packages [documentation](docs.md)
+
 ---
 
 It's objective is to ease the creation, testing, and deploying of multiple python packages in a single repository.

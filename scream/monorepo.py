@@ -1,4 +1,4 @@
-from scream.files import Scream, Tox
+from scream.files import Docs, Scream, Tox
 
 
 class Monorepo(object):
@@ -11,3 +11,4 @@ class Monorepo(object):
         """
         self.config = Scream(self.root_dir)
         Tox(self.config.packages).write(self.root_dir)
+        Docs(self.config.packages).write(self.root_dir)

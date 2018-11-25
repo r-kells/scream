@@ -38,7 +38,7 @@ def init_monorepo(root_dir):
 
     MonorepoReadme().write(root_dir)
     GitIgnore().write(root_dir)
-    Tox(packages=[]).write(root_dir)
+    Tox().write(root_dir)
 
     subprocess.call(["git", "init"])
 

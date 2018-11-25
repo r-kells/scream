@@ -59,10 +59,9 @@ TOX_COMMAND_TEMPL = """\
 
 
 class Tox(File):
-    def __init__(self, packages):
-        self.packages = packages
+    def __init__(self, packages=None):
 
-        if self.packages:
+        if packages:
 
             env_matrix = []
             env_matrix_tmplate = "{{{pyversions}}}-{{{packages}}}"
@@ -71,7 +70,7 @@ class Tox(File):
 
             pyversion_matrix = defaultdict(list)
 
-            for package in self.packages:
+            for package in packages:
                 env_commands += TOX_COMMAND_TEMPL.format(
                     package_name=package.package_name,
                     package_dir=package.package_dir,

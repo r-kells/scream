@@ -1,5 +1,5 @@
 """
-Tests the user endpoints directly
+Tests the user endpoints directly.
 TODO capture logging output to verify exactly what is happening.
 """
 try:
@@ -23,6 +23,7 @@ TMP_DIR = os.path.join(PARENT_DIR, 'tmp')
 class TestCliInitMonorepo(unittest.TestCase):
     """Make sure `scream init` runs, and all other commands gracefully fail if `scream init` hasn't run.
     """
+
     @classmethod
     def setUp(cls):
         if os.path.isdir(TMP_DIR):
@@ -55,6 +56,40 @@ class TestCliInitMonorepo(unittest.TestCase):
                     with self.assertRaises(SystemExit) as err:
                         scream.Scream()
                     self.assertEqual(err.exception.code, 1)
+
+
+class TestCliNew(unittest.TestCase):
+    """Make sure all `scream test` commands run, with any without any packages existing.
+    """
+    cmd = ["scream", "new", "company.packagea"]
+
+    @classmethod
+    def setUp(cls):
+        if os.path.isdir(TMP_DIR):
+            shutil.rmtree(TMP_DIR)
+
+        os.mkdir(TMP_DIR)
+        with chdir(TMP_DIR):
+            scream.init_monorepo(TMP_DIR)
+            # The user is required to setup git to get the most out of `scream test` and `scream build`.
+            subprocess.call(["git", "config", "user.email", "ryan.kelly.md@gmail.com"])
+            subprocess.call(["git", "config", "user.name", "Ryan Kelly"])
+
+            subprocess.call(["git", "add", "."])
+            subprocess.call(["git", "commit", "-m", "init monorepo!"])
+
+    @classmethod
+    def tearDown(cls):
+        if os.path.isdir(TMP_DIR):
+            shutil.rmtree(TMP_DIR)
+
+    def test_new_package(self):
+
+        with chdir(TMP_DIR):
+            with mock.patch.object(sys, "argv", self.cmd):
+                with self.assertRaises(SystemExit) as err:
+                    scream.Scream()
+                self.assertEqual(err.exception.code, 0)
 
 
 class TestCliTest(unittest.TestCase):
@@ -116,3 +151,55 @@ class TestCliTest(unittest.TestCase):
                     with self.assertRaises(SystemExit) as err:
                         scream.Scream()
                     self.assertEqual(err.exception.code, 0)
+
+
+class TestCliInstall(unittest.TestCase):
+    """Make sure all `scream test` commands run, with any without any packages existing.
+    """
+    cmd = ["scream", "install", "com_packagea"]
+
+    @classmethod
+    def setUp(cls):
+        if os.path.isdir(TMP_DIR):
+            shutil.rmtree(TMP_DIR)
+
+        os.mkdir(TMP_DIR)
+        with chdir(TMP_DIR):
+            scream.init_monorepo(TMP_DIR)
+            # The user is required to setup git to get the most out of `scream test` and `scream build`.
+            subprocess.call(["git", "config", "user.email", "ryan.kelly.md@gmail.com"])
+            subprocess.call(["git", "config", "user.name", "Ryan Kelly"])
+
+            subprocess.call(["git", "add", "."])
+            subprocess.call(["git", "commit", "-m", "init monorepo!"])
+
+    @classmethod
+    def tearDown(cls):
+        if os.path.isdir(TMP_DIR):
+            shutil.rmtree(TMP_DIR)
+
+    def test_install_no_packages_created(self):
+
+        with chdir(TMP_DIR):
+            with mock.patch.object(sys, "argv", self.cmd):
+                with self.assertRaises(SystemExit) as err:
+                    scream.Scream()
+                self.assertEqual(err.exception.code, 1)
+
+    def test_install_with_packages_created(self):
+        cmd = ["scream", "new", "com.packagea"]
+
+        with chdir(TMP_DIR):
+            # Add a package.
+            with mock.patch.object(sys, "argv", cmd):
+                with self.assertRaises(SystemExit) as err:
+                    scream.Scream()
+                self.assertEqual(err.exception.code, 0)
+
+            subprocess.call(["git", "add", "."])
+
+        with chdir(TMP_DIR):
+            with mock.patch.object(sys, "argv", self.cmd):
+                with self.assertRaises(SystemExit) as err:
+                    scream.Scream()
+                self.assertEqual(err.exception.code, 0)

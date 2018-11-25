@@ -16,6 +16,7 @@ def test(package_name=None, all=False, dry_run=False):
     if package_name:
         logging.info("Testing {}".format(package_name))
         subprocess.call(["tox", "-e", package_name])
+        return
     if all:
         logging.info("Testing all packages...")
         subprocess.call(["tox"])

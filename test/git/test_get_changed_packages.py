@@ -13,7 +13,7 @@ import scream.cli.main as scream
 from scream import detect_changed_packages
 from scream.utils import chdir
 
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PARENT_DIR = os.path.dirname(os.path.abspath(__file__))
 TMP_DIR = os.path.join(PARENT_DIR, 'tmp')
 
 

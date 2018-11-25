@@ -5,10 +5,9 @@ except ImportError:
 import logging
 import os
 
-from ..package import Package, PackageDoesNotExistException
 from .util import File
+from ..package import Package, PackageDoesNotExistException
 from ..utils import WHITELISTED_FILES
-
 
 TEMPLATE = """\
 [scream]

@@ -37,7 +37,7 @@ class Base(object):
         def setUp(cls):
             super(Base.TestNewMonorepoGitInit, cls).setUp()
             with chdir(cls.TMP_DIR):
-                scream.init_monorepo(cls.TMP_DIR)
+                scream.init_monorepo(cls.TMP_DIR)  # This is tested directly in integration_tests/test_cli.py
                 # The user is required to setup git to get the most out of `scream test` and `scream build`.
                 subprocess.call(["git", "config", "user.email", "ryan.kelly.md@gmail.com"])
                 subprocess.call(["git", "config", "user.name", "Ryan Kelly"])

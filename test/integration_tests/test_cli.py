@@ -59,7 +59,7 @@ class TestCliInitMonorepo(unittest.TestCase):
 
 
 class TestCliNew(unittest.TestCase):
-    """Make sure all `scream test` commands run, with any without any packages existing.
+    """Make sure all `scream new` commands run.
     """
     cmd = ["scream", "new", "company.packagea"]
 
@@ -93,7 +93,7 @@ class TestCliNew(unittest.TestCase):
 
 
 class TestCliTest(unittest.TestCase):
-    """Make sure all `scream test` commands run, with any without any packages existing.
+    """Make sure all `scream test` commands run, with or without any packages existing.
     """
     test = ["scream", "test"]
     test_package = ["scream", "test", "--name", "company_packagea", "--dry-run"]
@@ -154,7 +154,7 @@ class TestCliTest(unittest.TestCase):
 
 
 class TestCliInstall(unittest.TestCase):
-    """Make sure all `scream test` commands run, with any without any packages existing.
+    """Make sure all `scream install` commands run, with or without any packages existing.
     """
     cmd = ["scream", "install", "com_packagea"]
 

@@ -5,9 +5,9 @@ import logging
 import os
 import sys
 
-from scream.monorepo import Monorepo
 from scream import utils
 from scream.commands import install, init_monorepo, new_package, test
+from scream.monorepo import Monorepo
 
 NAMESPACE_DELIM = '.'
 NAMESPACE_HELP_URL = 'https://github.com/pypa/sample-namespace-packages/tree/master/pkgutil'
@@ -18,10 +18,10 @@ DESCRIPTION = "An opinionated CLI tool for Python monorepo MGMT."
 USAGE = """scream <command> [<args>]
 
 Commands:
-* new <package_name>      - Creates new template package.
-* test [--dry-run][--all] - Test packages that have changed or who's dependencies have changed since master.
-* install <package_name>  - Installs a package.
-* build                   - Builds a python wheel and bundles it with all it's dependencies as wheels.
+    new <package_name>      - Creates new template package.
+    test [--dry-run][--all] - Test packages that have changed or who's dependencies have changed since master.
+    install <package_name>  - Installs a package.
+    build                   - Builds a python wheel and bundles it with all it's dependencies as wheels.
 """
 
 logger = logging.getLogger()
@@ -104,11 +104,12 @@ class Scream(object):
         self.monorepo.sync()
 
         parser = argparse.ArgumentParser()
+        parser.add_argument('--package-name', dest='package_name')
         parser.add_argument('--dry-run', dest='dry_run', default=False, action='store_true')
         parser.add_argument('--all', dest='all', default=False, action='store_true')
         args = parser.parse_args(sys.argv[2:])
 
-        test(dry_run=args.dry_run, all=args.all)
+        test(package_name=args.package_name, dry_run=args.dry_run, all=args.all)
 
     def install(self):
         parser = argparse.ArgumentParser()

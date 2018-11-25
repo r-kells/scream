@@ -6,7 +6,7 @@ README_DIR = os.path.join(ROOT_DIR, "README.md")
 
 PACKAGE_TEMPLATE = """\
 # {title}
-![Python <2.7?>](https://img.shields.io/badge/python-<2.7?>-blue.svg)-----
+![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)-----
 
 **Table of Contents**
 

@@ -1,5 +1,6 @@
 """
 Tests the user endpoints directly
+TODO capture logging output to verify exactly what is happening.
 """
 try:
     from unittest import mock

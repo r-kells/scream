@@ -7,7 +7,7 @@ import os
 import subprocess
 import sys
 
-from scream.files import GitIgnore, File, MonorepoReadme, Tox
+from scream.files import Docs, GitIgnore, File, MonorepoReadme, Tox
 from scream.utils import WHITELISTED_FILES
 
 INIT_SCREAM_TMPL = "[scream]"
@@ -37,6 +37,7 @@ def init_monorepo(root_dir):
     MonorepoReadme().write(root_dir)
     GitIgnore().write(root_dir)
     Tox().write(root_dir)
+    Docs().write(root_dir)
 
     subprocess.call(["git", "init"])
 

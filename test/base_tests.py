@@ -28,7 +28,7 @@ class Base(object):
             if os.path.isdir(cls.TMP_DIR):
                 shutil.rmtree(cls.TMP_DIR)
 
-    class TestNewMonorepoGitInit(TestNewMonorepo):
+    class TestNewMonorepoGitInit(TestNewMonorepo, unittest.TestCase):
         """Make sure knows how to setup and tear down a new monorepo directory
         """
         TMP_DIR = TMP_DIR

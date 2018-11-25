@@ -79,11 +79,15 @@ def get_unique_changed_packages(diffs):
 
     for change in diffs:
         if len(change) != 2:
+            logging.debug(change)
             continue
 
         change_type, path = change
+
+        path_tokens = path.split('/')
+
         try:
-            package = Package(package_dir=path.split('/')[0])
+            package = Package(package_dir=path_tokens[0])
         except PackageDoesNotExistException:
             continue
 

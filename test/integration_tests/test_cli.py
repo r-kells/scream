@@ -15,25 +15,19 @@ import unittest
 import scream.cli.main as scream
 from scream.utils import chdir
 
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PARENT_DIR = os.path.dirname(os.path.abspath(__file__))
 TMP_DIR = os.path.join(PARENT_DIR, 'tmp')
 
 
-class TestUserExperience(unittest.TestCase):
-
+class TestCliInitMonorepo(unittest.TestCase):
+    """Make sure `scream init` runs, and all other commands gracefully fail if `scream init` hasn't run.
+    """
     @classmethod
     def setUp(cls):
         if os.path.isdir(TMP_DIR):
             shutil.rmtree(TMP_DIR)
 
         os.mkdir(TMP_DIR)
-        with chdir(TMP_DIR):
-            # The user is required to setup git to get the most out of `scream test` and `scream build`.
-            subprocess.call(["git", "config", "user.email", "ryan.kelly.md@gmail.com"])
-            subprocess.call(["git", "config", "user.name", "Ryan Kelly"])
-
-            subprocess.call(["git", "add", "."])
-            subprocess.call(["git", "commit", "-m", "init monorepo!"])
 
     @classmethod
     def tearDown(cls):
@@ -48,8 +42,6 @@ class TestUserExperience(unittest.TestCase):
                 self.assertEqual(err.exception.code, 0)
 
     def test_cmd_b4_init_monorepo(self):
-        """Makes sure all commands gracefully handle being run before `scream init`.
-        """
         test_command = ["scream", "test"]
         new_command = ["scream", "new", "company.packagea"]
         install_command = ["scream", "install", "company_packagea"]
@@ -63,15 +55,38 @@ class TestUserExperience(unittest.TestCase):
                         scream.Scream()
                     self.assertEqual(err.exception.code, 1)
 
+
+class TestCliTest(unittest.TestCase):
+    """Make sure all `scream test` commands run, with any without any packages existing.
+    """
+    test = ["scream", "test"]
+    test_package = ["scream", "test", "--name", "company_packagea", "--dry-run"]
+    test_dry = ["scream", "test", "--dry-run"]
+    test_all = ["scream", "test", "--all", "--dry-run"]
+
+    @classmethod
+    def setUp(cls):
+        if os.path.isdir(TMP_DIR):
+            shutil.rmtree(TMP_DIR)
+
+        os.mkdir(TMP_DIR)
+        with chdir(TMP_DIR):
+            scream.init_monorepo(TMP_DIR)
+            # The user is required to setup git to get the most out of `scream test` and `scream build`.
+            subprocess.call(["git", "config", "user.email", "ryan.kelly.md@gmail.com"])
+            subprocess.call(["git", "config", "user.name", "Ryan Kelly"])
+
+            subprocess.call(["git", "add", "."])
+            subprocess.call(["git", "commit", "-m", "init monorepo!"])
+
+    @classmethod
+    def tearDown(cls):
+        if os.path.isdir(TMP_DIR):
+            shutil.rmtree(TMP_DIR)
+
     def test_test_no_packages_created(self):
-        scream.init_monorepo(TMP_DIR)
 
-        test = ["scream", "test"]
-        test_package = ["scream", "test", "--name", "company.packagea"]
-        test_dry = ["scream", "test", "--dry-run"]
-        test_all = ["scream", "test", "--all", "--dry-run"]
-
-        cmds = [test, test_package, test_all, test_dry]
+        cmds = [self.test, self.test_package, self.test_all, self.test_dry]
 
         with chdir(TMP_DIR):
             for cmd in cmds:
@@ -80,25 +95,23 @@ class TestUserExperience(unittest.TestCase):
                         scream.Scream()
                     self.assertEqual(err.exception.code, 0)
 
-# class TestUserExperienceNoGit(unittest.TestCase):
-#     """
-#     Runs some tests to make sure nothing breaks prior to a user initializing a git repo.
-#     """
-#
-#     @classmethod
-#     def setUp(cls):
-#         if os.path.isdir(TMP_DIR):
-#             shutil.rmtree(TMP_DIR)
-#
-#         os.mkdir(TMP_DIR)
-#
-#     @classmethod
-#     def tearDown(cls):
-#         if os.path.isdir(TMP_DIR):
-#             shutil.rmtree(TMP_DIR)
-#
-#     def test_scream_test_gracefully_handle_no_git(self):
-#         with chdir(TMP_DIR):
-#             with mock.patch.object(sys, "argv", ["scream", "test"]):
-#                 with self.assertRaises(SystemExit):
-#                     scream.Scream()
+    def test_test_with_packages_created(self):
+        cmd = ["scream", "new", "com.packagea"]
+
+        with chdir(TMP_DIR):
+            # Add a package.
+            with mock.patch.object(sys, "argv", cmd):
+                with self.assertRaises(SystemExit) as err:
+                    scream.Scream()
+                self.assertEqual(err.exception.code, 0)
+
+            subprocess.call(["git", "add", "."])
+
+        cmds = [self.test_package, self.test_all, self.test_dry]
+
+        with chdir(TMP_DIR):
+            for cmd in cmds:
+                with mock.patch.object(sys, "argv", cmd):
+                    with self.assertRaises(SystemExit) as err:
+                        scream.Scream()
+                    self.assertEqual(err.exception.code, 0)

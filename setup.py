@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=readme(),
     long_description_content_type="text/markdown",
     url="https://github.com/r-kells/scream",
-    version='0.0.10',
+    version='0.0.11',
     packages=setuptools.find_packages(exclude=["venv", "test"]),
     install_requires=[
         "flake8==3.5.0",

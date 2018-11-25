@@ -130,9 +130,8 @@ class Scream(object):
         parser.add_argument('package_name')
         args = parser.parse_args(sys.argv[2:])
 
-        package_name = args.package_name
         try:
-            install(package_name)
+            install(args.package_name)
         except PackageDoesNotExistException:
             logging.error("Package doesn't exit. Packages are named '<namespace(s)>_<name>'")
             sys.exit(1)

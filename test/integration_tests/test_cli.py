@@ -12,7 +12,7 @@ import sys
 
 import scream.cli.main as scream
 from scream.utils import chdir
-from .base_integration import Base
+from test.base_tests import Base
 
 
 class TestCliInitMonorepo(Base.TestNewMonorepo):

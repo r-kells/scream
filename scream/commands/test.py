@@ -4,14 +4,18 @@ import subprocess
 from scream.detect_changed_packages import get_changed_packages_and_dependents
 
 
-def test(dry_run=False, all=False):
+def test(package_name=None, all=False, dry_run=False):
     """Tests all packages that have changed, or packages who's dependencies have changed.
     The tox testing environments can support running package tests against different python versions, etc.
     Args:
+        package_name (str): the name of the package you want to test, including the namespace.
         dry_run (bool): if True, just print what packages have changed, and what packages would be tested.
         all (bool): if True, immediately test all packages (overrides dry-run).
 
     """
+    if package_name:
+        logging.info("Testing {}".format(package_name))
+        subprocess.call(["tox", "-e", package_name])
     if all:
         logging.info("Testing all packages...")
         subprocess.call(["tox"])

@@ -48,3 +48,16 @@ class Base(object):
         @classmethod
         def tearDown(cls):
             super(Base.TestNewMonorepoGitInit, cls).tearDown()
+
+
+class MyPackage(object):
+    """Boilerplate helper
+    """
+
+    def __init__(self, d, name):
+        self.name = name
+        self.namespaces = 'company'
+
+        self.package_dir = os.path.join(d, self.name)
+
+        self.full_name = self.namespaces + '_' + self.name

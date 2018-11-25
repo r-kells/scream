@@ -5,9 +5,9 @@ except ImportError:
 import os
 
 from scream.files.setup import SetupCfg
-from scream.package import Package
+from scream.package import Package, PackageDoesNotExistException
 from scream.utils import chdir
-from test.base_tests import Base
+from test.base_tests import Base, MyPackage
 
 
 class MockPackage(Package):
@@ -16,16 +16,6 @@ class MockPackage(Package):
 
     def __init__(self):
         pass
-
-
-class MyPackage(object):
-    def __init__(self, d, name):
-        self.name = name
-        self.namespaces = 'company'
-
-        self.package_dir = os.path.join(d, self.name)
-
-        self.full_name = self.namespaces + '_' + self.name
 
 
 class TestPackages(Base.TestNewMonorepoGitInit):
@@ -39,12 +29,32 @@ class TestPackages(Base.TestNewMonorepoGitInit):
 
             self.assertIsInstance(MockPackage().get_cfg(package_a.package_dir), configparser.ConfigParser)
 
+    def test_get_package_doesnt_exist(self):
+        """Test both ways to initialize
+        """
+        package_a = MyPackage(self.TMP_DIR, "packagea")
+        with chdir(self.TMP_DIR):
+            with self.assertRaises(PackageDoesNotExistException):
+                Package(package_name=package_a.full_name).get_dependents(package_a.package_dir)
+            with self.assertRaises(PackageDoesNotExistException):
+                Package(package_dir=package_a.package_dir).get_dependents(package_a.package_dir)
+
+    def test_get_package(self):
+        package_a = MyPackage(self.TMP_DIR, "packagea")
+
+        SetupCfg(package_a.full_name).write(package_a.package_dir)
+        with chdir(self.TMP_DIR):
+            Package(package_name=package_a.full_name)
+            Package(package_dir=package_a.package_dir)
+
     def test_resolve_dependencies(self):
+        package_c = MyPackage(self.TMP_DIR, "packagec")
         package_b = MyPackage(self.TMP_DIR, "packageb")
         package_a = MyPackage(self.TMP_DIR, "packagea")
 
         SetupCfg(package_a.full_name, dependencies=[package_b.full_name]).write(package_a.package_dir)
-        SetupCfg(package_b.full_name).write(package_b.package_dir)
+        SetupCfg(package_b.full_name, dependencies=[package_c.full_name]).write(package_b.package_dir)
+        SetupCfg(package_c.full_name).write(package_c.package_dir)
 
         with chdir(self.TMP_DIR):
             a_dependencies = Package(package_name=package_a.full_name).get_dependents(package_a.package_dir)

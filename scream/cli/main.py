@@ -93,7 +93,6 @@ class Scream(object):
 
     def test(self):
         help = "Tests packages that have changed compared to the parent branch."
-        # TODO don't test if simply README changed, etc.
         self.monorepo.sync()
 
         parser = argparse.ArgumentParser(description=help)

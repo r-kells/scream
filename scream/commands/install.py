@@ -46,8 +46,6 @@ def _install_package(package):
     """
     wheelhouse_dir = os.path.join(os.path.dirname(package.package_dir), "wheelhouse")
 
-    # develop_cmd = "-f " if develop else ""
-
     create_wheel_cmd = ["pip", "wheel", "-f", wheelhouse_dir, "-w", wheelhouse_dir, package.package_dir]
     install_cmd = ["pip", "install", "-f", wheelhouse_dir, package.package_name]
 

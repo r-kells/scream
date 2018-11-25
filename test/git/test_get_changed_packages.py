@@ -9,8 +9,9 @@ import sys
 
 import scream.cli.main as scream
 from scream import detect_changed_packages
+from scream.files.setup import SetupCfg
 from scream.utils import chdir
-from test.base_tests import Base
+from test.base_tests import Base, MyPackage
 
 
 class TestChangedPackages(Base.TestNewMonorepoGitInit):
@@ -33,26 +34,13 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
         self.assertEqual(changed_files, [], parent_branch)
 
     def test_changed_packages(self):
-        packagea_name = "packagea"
-        packagea_dir = os.path.join(self.TMP_DIR, packagea_name)
-
-        expected_changes = [
-            ['A', 'packagea/README.md'],
-            ['A', 'packagea/company/__init__.py'],
-            ['A', 'packagea/company/packagea/__init__.py'],
-            ['A', 'packagea/company/packagea/module.py'],
-            ['A', 'packagea/setup.cfg'],
-            ['A', 'packagea/setup.py'],
-            ['A', 'packagea/tests/__init__.py'],
-            ['A', 'packagea/tests/test_module.py']
-        ]
+        expected_changes = [['A', 'packagea/setup.cfg']]
 
         with chdir(self.TMP_DIR):
-            # Add a package.
-            scream.new_package(
-                packagea_dir,
-                namespaces=['company'],
-                package_name=packagea_name)
+            package_a = MyPackage(d=self.TMP_DIR, name="packagea")
+
+            os.mkdir(package_a.name)
+            SetupCfg(package_a.full_name).write(package_a.package_dir)
 
             subprocess.call(["git", "add", "."])
 

@@ -13,26 +13,29 @@ def test(package_name=None, all=False, dry_run=False):
         all (bool): if True, immediately test all packages (overrides dry-run).
 
     """
+    cmd = []
+
     if package_name:
         logging.info("Testing {}".format(package_name))
-        subprocess.call(["tox", "-e", package_name])
-        return
+        cmd = ["tox", "-e", package_name]
     if all:
         logging.info("Testing all packages...")
-        subprocess.call(["tox"])
-        return
+        cmd = ["tox"]
 
     impacted_packages = get_changed_packages_and_dependents()
 
-    if dry_run or not impacted_packages:
+    if impacted_packages:
+
+        toxenvs_to_test_list = []
+
+        for _, package in impacted_packages.items():
+            for pyversion in package.tox_pyversions:
+                toxenvs_to_test_list.append(pyversion + '-' + package.package_name)
+
+        toxenvs_to_test_str = ','.join(toxenvs_to_test_list)
+        cmd = ["tox", "-e", toxenvs_to_test_str]
+
+    if dry_run:
         return
-
-    toxenvs_to_test_list = []
-
-    for _, package in impacted_packages.items():
-        for pyversion in package.tox_pyversions:
-            toxenvs_to_test_list.append(pyversion + '-' + package.package_name)
-
-    toxenvs_to_test_str = ','.join(toxenvs_to_test_list)
-
-    subprocess.call(["tox", "-e", toxenvs_to_test_str])
+    if cmd:
+        subprocess.call(cmd)

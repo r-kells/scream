@@ -9,6 +9,7 @@ from scream import utils
 from scream.commands import install, init_monorepo, new_package, test
 from scream.detect_changed_packages import NoGitException
 from scream.monorepo import Monorepo
+from scream.package import PackageDoesNotExistException
 
 NAMESPACE_DELIM = '.'
 NAMESPACE_HELP_URL = 'https://github.com/pypa/sample-namespace-packages/tree/master/pkgutil'
@@ -57,7 +58,8 @@ class Scream(object):
             try:
                 self.monorepo = Monorepo(os.getcwd())
             except IOError:
-                sys.exit("Slow down partner, run `scream init` in an empty directory first.")
+                logging.error("Slow down partner, run `scream init` in an empty directory first.")
+                sys.exit(1)
 
         getattr(self, args.command)()
         # Exit after calling the matching class function
@@ -129,7 +131,11 @@ class Scream(object):
         args = parser.parse_args(sys.argv[2:])
 
         package_name = args.package_name
-        install(package_name)
+        try:
+            install(package_name)
+        except PackageDoesNotExistException:
+            logging.error("Package doesn't exit. Packages are named '<namespace(s)>_<name>'")
+            sys.exit(1)
 
     # def build(self):
     #     parser = argparse.ArgumentParser(description='help')

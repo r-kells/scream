@@ -4,52 +4,28 @@ except ImportError:
     import mock
 
 import os
-import shutil
 import subprocess
 import sys
-import unittest
 
 import scream.cli.main as scream
 from scream import detect_changed_packages
 from scream.utils import chdir
-
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TMP_DIR = os.path.join(PARENT_DIR, 'tmp')
+from test.base_tests import Base
 
 
-class TestChangedPackages(unittest.TestCase):
-
-    @classmethod
-    def setUp(cls):
-        if os.path.isdir(TMP_DIR):
-            shutil.rmtree(TMP_DIR)
-
-        os.mkdir(TMP_DIR)
-        with chdir(TMP_DIR):
-            scream.init_monorepo(TMP_DIR)
-            # The user is required to setup git to get the most out of `scream test` and `scream build`.
-            subprocess.call(["git", "config", "user.email", "ryan.kelly.md@gmail.com"])
-            subprocess.call(["git", "config", "user.name", "Ryan Kelly"])
-
-            subprocess.call(["git", "add", "."])
-            subprocess.call(["git", "commit", "-m", "init monorepo!"])
-
-    @classmethod
-    def tearDown(cls):
-        if os.path.isdir(TMP_DIR):
-            shutil.rmtree(TMP_DIR)
+class TestChangedPackages(Base.TestNewMonorepoGitInit):
 
     def test_get_parent_no_parent(self):
-        with chdir(TMP_DIR):
+        with chdir(self.TMP_DIR):
             self.assertEqual(detect_changed_packages.get_parent_branch(), "master")
 
     def test_get_parent_branch(self):
-        with chdir(TMP_DIR):
+        with chdir(self.TMP_DIR):
             subprocess.call(["git", "checkout", "-b", "otherbranch"])
             self.assertEqual(detect_changed_packages.get_parent_branch(), "master")
 
     def test_no_changed_packages(self):
-        with chdir(TMP_DIR):
+        with chdir(self.TMP_DIR):
             parent_branch = detect_changed_packages.get_parent_branch()
             changed_files = detect_changed_packages.get_changed_files(
                 parent_branch)
@@ -58,7 +34,7 @@ class TestChangedPackages(unittest.TestCase):
 
     def test_changed_packages(self):
         packagea_name = "packagea"
-        packagea_dir = os.path.join(TMP_DIR, packagea_name)
+        packagea_dir = os.path.join(self.TMP_DIR, packagea_name)
 
         expected_changes = [
             ['A', 'packagea/README.md'],
@@ -71,7 +47,7 @@ class TestChangedPackages(unittest.TestCase):
             ['A', 'packagea/tests/test_module.py']
         ]
 
-        with chdir(TMP_DIR):
+        with chdir(self.TMP_DIR):
             # Add a package.
             scream.new_package(
                 packagea_dir,
@@ -92,27 +68,13 @@ class TestChangedPackages(unittest.TestCase):
         self.assertEqual(expected, actual)
 
 
-class NoGitCommitsYetTestChangedPackages(unittest.TestCase):
+class NoGitCommitsYetTestChangedPackages(Base.TestNewMonorepo):
     """
     Runs some tests to make sure nothing breaks prior to a user initializing a git repo.
     """
 
-    @classmethod
-    def setUp(cls):
-        if os.path.isdir(TMP_DIR):
-            shutil.rmtree(TMP_DIR)
-
-        os.mkdir(TMP_DIR)
-        with chdir(TMP_DIR):
-            scream.init_monorepo(TMP_DIR)
-
-    @classmethod
-    def tearDown(cls):
-        if os.path.isdir(TMP_DIR):
-            shutil.rmtree(TMP_DIR)
-
     def test_scream_test_gracefully_handle_no_git(self):
-        with chdir(TMP_DIR):
+        with chdir(self.TMP_DIR):
             with mock.patch.object(sys, "argv", ["scream", "test"]):
                 with self.assertRaises(SystemExit):
                     scream.Scream()

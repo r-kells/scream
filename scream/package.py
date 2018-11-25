@@ -11,10 +11,6 @@ class PackageDoesNotExistException(Exception):
     pass
 
 
-class CircularDependencyException(Exception):
-    pass
-
-
 class Package:
     def __init__(self, package_name=None, package_dir=None):
         self.package_dir = package_dir or self.get_package_dir(package_name)

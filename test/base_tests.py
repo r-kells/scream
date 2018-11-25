@@ -28,7 +28,7 @@ class Base(object):
             if os.path.isdir(cls.TMP_DIR):
                 shutil.rmtree(cls.TMP_DIR)
 
-    class TestNewMonorepoGitInit(TestNewMonorepo):
+    class TestNewMonorepoGitInit(TestNewMonorepo, unittest.TestCase):
         """Make sure knows how to setup and tear down a new monorepo directory
         """
         TMP_DIR = TMP_DIR
@@ -48,3 +48,16 @@ class Base(object):
         @classmethod
         def tearDown(cls):
             super(Base.TestNewMonorepoGitInit, cls).tearDown()
+
+
+class MyPackage(object):
+    """Boilerplate helper
+    """
+
+    def __init__(self, d, name):
+        self.name = name
+        self.namespaces = 'company'
+
+        self.package_dir = os.path.join(d, self.name)
+
+        self.full_name = self.namespaces + '_' + self.name

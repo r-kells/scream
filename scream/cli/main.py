@@ -57,7 +57,8 @@ class Scream(object):
             try:
                 self.monorepo = Monorepo(os.getcwd())
             except IOError:
-                sys.exit("Slow down partner, run `scream init` in an empty directory first.")
+                logging.error("Slow down partner, run `scream init` in an empty directory first.")
+                sys.exit(1)
 
         getattr(self, args.command)()
         # Exit after calling the matching class function

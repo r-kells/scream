@@ -13,29 +13,35 @@ def test(package_name=None, all=False, dry_run=False):
         all (bool): if True, immediately test all packages (overrides dry-run).
 
     """
+    cmd = build_test_cmd(package_name, all, dry_run)
+    if cmd:
+        subprocess.call(cmd)
+
+
+def build_test_cmd(package_name=None, all=False, dry_run=False):
     cmd = []
 
-    if package_name:
+    if package_name is not None:
         logging.info("Testing {}".format(package_name))
         cmd = ["tox", "-e", package_name]
-    if all:
+    elif all:
         logging.info("Testing all packages...")
         cmd = ["tox"]
 
-    impacted_packages = get_changed_packages_and_dependents()
+    else:
+        impacted_packages = get_changed_packages_and_dependents()
+        if impacted_packages:
 
-    if impacted_packages:
+            toxenvs_to_test_list = []
 
-        toxenvs_to_test_list = []
+            for _, package in impacted_packages.items():
+                for pyversion in package.tox_pyversions:
+                    toxenvs_to_test_list.append(pyversion + '-' + package.package_name)
 
-        for _, package in impacted_packages.items():
-            for pyversion in package.tox_pyversions:
-                toxenvs_to_test_list.append(pyversion + '-' + package.package_name)
-
-        toxenvs_to_test_str = ','.join(toxenvs_to_test_list)
-        cmd = ["tox", "-e", toxenvs_to_test_str]
+            toxenvs_to_test_str = ','.join(toxenvs_to_test_list)
+            cmd = ["tox", "-e", toxenvs_to_test_str]
 
     if dry_run:
         return
-    if cmd:
-        subprocess.call(cmd)
+
+    return cmd

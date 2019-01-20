@@ -30,7 +30,7 @@ class Package:
 
         # Expose relevant package variables here...
         self.package_name = package_name or self.get_package_name()
-        self.dependencies = self.get_dependents(self.package_dir)
+        self.local_dependencies, self.other_dependencies = self.get_dependents(self.package_dir)
         self.pyversions = self.get_python_versions()
         self.tox_pyversions = self.get_tox_pyversions()
 
@@ -50,18 +50,21 @@ class Package:
 
         return os.path.join(cwd, package_name_without_namespace)
 
-    def get_dependents(self, package_dir, dependencies=None):
+    def get_dependents(self, package_dir, local_dependencies=None, other_dependencies=None):
         """ Build local dependencies for a given package.
 
         Args:
-            package (str): a package name to get requirements for.
-            dependencies (list): a mutable list to keep track of dependencies in between recursive runs.
+            package_dir (str): a dir containing a package to get requirements for.
+            local_dependencies (list): a mutable list to keep track of mono repo dependencies in between recursive runs.
+            other_dependencies (list): a mutable list to keep track of other (pypi) dependencies in between recursive runs.
 
         Return:
             (list): the local dependencies required to install the `package` requested.
         """
-        if dependencies is None:
-            dependencies = []
+        if local_dependencies is None:
+            local_dependencies = []
+        if other_dependencies is None:
+            other_dependencies = []
 
         requirements = self.get_requirements()
 
@@ -72,15 +75,16 @@ class Package:
                 try:
                     package = Package(package_name=pkg)
                 except PackageDoesNotExistException:
-                    continue
+                    other_dependencies.append(pkg)
                 else:
-                    dependencies.append(package)
-                    dependencies.extend(package.dependencies)
+                    local_dependencies.append(package)
+                    local_dependencies.extend(package.local_dependencies)
+                    other_dependencies.extend(package.other_dependencies)
 
         except RuntimeError:
             sys.exit("Circular dependency detected!")
 
-        return dependencies
+        return local_dependencies, other_dependencies
 
     def get_cfg(self, package_dir):
         """

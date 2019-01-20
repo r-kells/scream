@@ -9,6 +9,10 @@ class NoMatchingDistributionException(Exception):
     pass
 
 
+class PackageInstallationException(Exception):
+    pass
+
+
 def install(package):
     """
     Installs individual packages and their dependents then caches them as wheels in the `wheelhouse` dir.
@@ -19,7 +23,6 @@ def install(package):
     """
     package = Package(package_name=package)
     logging.info("Installing package: `{}`...".format(package.package_name))
-
     # Before checking dependencies, see if we can install straight away.
     try:
         _install_package(package)
@@ -47,13 +50,15 @@ def _install_package(package):
     wheelhouse_dir = os.path.join(os.path.dirname(package.package_dir), "wheelhouse")
 
     create_wheel_cmd = ["pip", "wheel", "-f", wheelhouse_dir, "-w", wheelhouse_dir, package.package_dir]
-    install_cmd = ["pip", "install", "-f", wheelhouse_dir, package.package_name]
+    install_cmd = ["pip", "install", "-f", wheelhouse_dir]
 
+    for other_deps in package.other_dependencies:
+        run(install_cmd + [other_deps])
     try:
-        run(install_cmd)
+        run(install_cmd + [package.package_name])
     except NoMatchingDistributionException:
         run(create_wheel_cmd)
-        run(install_cmd)
+        run(install_cmd + [package.package_name])
 
 
 def run(cmd):
@@ -73,3 +78,4 @@ def run(cmd):
         err_str = err.output.decode("utf-8")
         if "No matching distribution found" in err_str:
             raise NoMatchingDistributionException(err_str)
+        raise PackageInstallationException(err_str)

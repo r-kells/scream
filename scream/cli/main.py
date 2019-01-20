@@ -125,12 +125,14 @@ class Scream(object):
             logging.error("Package doesn't exit. Packages are named '<namespace(s)>_<name>'")
             sys.exit(1)
 
-    # def build(self):
-    #     parser = argparse.ArgumentParser(description='help')
-    #     parser.add_argument('package_name')
-    #     args = parser.parse_args(sys.argv[2:])
-    #
-    #     raise NotImplementedError(args)
+    def build(self):
+        help = "WARNING: NOT IMPLIMENTED - Build a versioned zip that contains the package " \
+               "and a directory of it's versioned dependencies."
+        parser = argparse.ArgumentParser(description=help)
+        parser.add_argument('package_name')
+        args = parser.parse_args(sys.argv[2:])
+
+        raise NotImplementedError(args)
 
 
 if __name__ == "__main__":

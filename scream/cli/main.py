@@ -15,6 +15,7 @@ DESCRIPTION = "An opinionated CLI tool for Python monorepo MGMT."
 USAGE = """scream <command> [<args>]
 
 Commands:
+    init                    - Run this first. Initiates a monorepo in an empty directory.
     new <package_name>      - Creates new template package.
     test [--dry-run][--all] - Test packages that have changed or who's dependencies have changed since master.
     install <package_name>  - Installs a package.

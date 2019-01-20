@@ -6,7 +6,7 @@ import os
 import sys
 
 from scream import utils
-from scream.commands import install, init_monorepo, new_package, test
+from scream.commands import install, init_monorepo, new_package, test, PackageInstallationException
 from scream.detect_changed_packages import NoGitException
 from scream.monorepo import Monorepo
 from scream.package import PackageDoesNotExistException, PackageNamingException, validate_package_name
@@ -123,6 +123,9 @@ class Scream(object):
             install(args.package_name)
         except PackageDoesNotExistException:
             logging.error("Package doesn't exit. Packages are named '<namespace(s)>_<name>'")
+            sys.exit(1)
+        except PackageInstallationException as e:
+            logging.error(e)
             sys.exit(1)
 
     def build(self):

@@ -32,7 +32,7 @@ def get_changed_packages_and_dependents():
 
         impacted_packages.update({package_name: package})
 
-        for dependency in package.dependencies:
+        for dependency in package.local_dependencies:
             impacted_packages.update({dependency.package_name: dependency})
 
     if impacted_packages:

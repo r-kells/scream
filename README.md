@@ -123,7 +123,7 @@ Running tests...
 ## Using your monorepo packages
 The two common ways you would install packages from this monorepo are:
 
-1. Using `scream build` in your CI tool to build packages and ship them to your machines.
+1. Clone your repository and run `scream build` or `scream install` in your CI tool to build packages and ship them to your machines.
 2. Standard pip install individual packages to any machine from private or public github repos.
 
 If your repository is *public*, you can simply install a subpackage anywhere using:

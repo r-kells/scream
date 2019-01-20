@@ -15,6 +15,7 @@ DESCRIPTION = "An opinionated CLI tool for Python monorepo MGMT."
 USAGE = """scream <command> [<args>]
 
 Commands:
+    init                    - Run this first. Initiates a monorepo in an empty directory.
     new <package_name>      - Creates new template package.
     test [--dry-run][--all] - Test packages that have changed or who's dependencies have changed since master.
     install <package_name>  - Installs a package.
@@ -127,12 +128,14 @@ class Scream(object):
             logging.error(e)
             sys.exit(1)
 
-    # def build(self):
-    #     parser = argparse.ArgumentParser(description='help')
-    #     parser.add_argument('package_name')
-    #     args = parser.parse_args(sys.argv[2:])
-    #
-    #     raise NotImplementedError(args)
+    def build(self):
+        help = "WARNING: NOT IMPLIMENTED - Build a versioned zip that contains the package " \
+               "and a directory of it's versioned dependencies."
+        parser = argparse.ArgumentParser(description=help)
+        parser.add_argument('package_name')
+        args = parser.parse_args(sys.argv[2:])
+
+        raise NotImplementedError(args)
 
 
 if __name__ == "__main__":

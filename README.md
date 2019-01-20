@@ -90,10 +90,11 @@ Packages that require testing:
 
 ## Commands
 
+* `scream init` - Run this first. Initiates a monorepo in an empty directory.
 * `scream new <package_name>` - Creates new template package.
 * `scream test [--dry-run][--all]` - Tests packages and package dependents that have changed.
 * `scream install <package_name>` - Installs a package.
-* `scream build` - Builds a python wheel and bundles it with all it's dependencies as wheels.
+* `scream build` - Builds a python wheel and bundles it with all it's dependencies as wheels. (TODO)
 
 ## Quickstart
 > By default packages are tested against python 3.6.x, which means you have it available on your PATH.

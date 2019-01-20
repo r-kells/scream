@@ -55,8 +55,8 @@ class Package:
 
         Args:
             package_dir (str): a dir containing a package to get requirements for.
-            local_dependencies (list): a mutable list to keep track of mono repo dependencies in between recursive runs.
-            other_dependencies (list): a mutable list to keep track of other (pypi) dependencies in between recursive runs.
+            local_dependencies (list): keeps track of mono repo dependencies in between recursive runs.
+            other_dependencies (list): keeps track of other (pypi) dependencies in between recursive runs.
 
         Return:
             (list): the local dependencies required to install the `package` requested.

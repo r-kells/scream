@@ -22,12 +22,14 @@ def install(package):
         package (str): A local package name. Ex: `company_examplea`.
 
     """
+    changed_packages = get_changed_packages()
+
     package = Package(package_name=package)
     logging.info("Installing package: `{}`...".format(package.package_name))
 
     for dependent_package in package.local_dependencies:
         logging.info("Installing dependency: `{}`...".format(dependent_package.package_name))
-        _install_package(dependent_package)
+        _install_package(dependent_package, changed_packages)
 
     # finally install the package that was originally requested.
     _install_package(package)
@@ -35,7 +37,7 @@ def install(package):
     logging.info("Installation complete.")
 
 
-def _install_package(package):
+def _install_package(package, changed_packages=None):
     """
     Tries to install `package` from the wheelhouse cache.
     If it doesnt exist:
@@ -44,13 +46,15 @@ def _install_package(package):
 
     Args:
         package (str): a package name to install
+        changed_packages (list[Package])
     """
+    if changed_packages is None:
+        changed_packages = []
+
     wheelhouse_dir = os.path.join(os.path.dirname(package.package_dir), "wheelhouse")
 
     create_wheel_cmd = ["pip", "wheel", "-f", wheelhouse_dir, "-w", wheelhouse_dir, package.package_dir]
     install_cmd = ["pip", "install", "-f", wheelhouse_dir]
-
-    changed_packages = get_changed_packages()
 
     for other_deps in package.other_dependencies:
         run(install_cmd + [other_deps])

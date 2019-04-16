@@ -3,11 +3,12 @@
 import argparse
 import logging
 import os
+import subprocess
 import sys
 
 from scream import utils
 from scream.commands import install, init_monorepo, new_package, test, PackageInstallationException
-from scream.detect_changed_packages import NoGitException
+from scream.detect_changed_packages import get_changed_packages, NoGitException
 from scream.monorepo import Monorepo
 from scream.package import PackageDoesNotExistException, PackageNamingException, validate_package_name
 
@@ -136,6 +137,22 @@ class Scream(object):
         args = parser.parse_args(sys.argv[2:])
 
         raise NotImplementedError(args)
+
+    def deploy(self):
+        """
+        For packages that have changed (or manually specified). Run the deploy script.
+        """
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--name', dest='name')
+        args = parser.parse_args(sys.argv[2:])
+
+        if args.name is None:
+            to_deploy = get_changed_packages(verbose=False)
+            for _, package in to_deploy.items():
+                _, package = package.package_name.split('_')
+                subprocess.call(["python", "{package}/deploy.py".format(package=package)])
+        else:
+            subprocess.call(["python", "{package}/deploy.py".format(package=args.name)])
 
 
 if __name__ == "__main__":

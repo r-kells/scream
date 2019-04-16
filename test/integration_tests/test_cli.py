@@ -124,3 +124,34 @@ class TestCliInstall(Base.TestNewMonorepoGitInit):
                 with self.assertRaises(SystemExit) as err:
                     scream.Scream()
                 self.assertEqual(err.exception.code, 0)
+
+
+class TestCliDeploy(Base.TestNewMonorepoGitInit):
+    """Make sure all `scream install` commands run, with or without any packages existing.
+    """
+    deploy_cmd = ["scream", "deploy", "--name", "com_packagea"]
+
+    def test_deploy_no_packages_created(self):
+        with chdir(self.TMP_DIR):
+            with mock.patch.object(sys, "argv", self.deploy_cmd):
+                with self.assertRaises(SystemExit) as err:
+                    scream.Scream()
+                self.assertEqual(err.exception.code, 0)
+
+    def test_deploy_with_packages_created(self):
+        install_cmd = ["scream", "new", "com.packagea"]
+
+        with chdir(self.TMP_DIR):
+            # Add a package.
+            with mock.patch.object(sys, "argv", install_cmd):
+                with self.assertRaises(SystemExit) as err:
+                    scream.Scream()
+                self.assertEqual(err.exception.code, 0)
+
+            subprocess.call(["git", "add", "."])
+
+        with chdir(self.TMP_DIR):
+            with mock.patch.object(sys, "argv", self.deploy_cmd):
+                with self.assertRaises(SystemExit) as err:
+                    scream.Scream()
+                self.assertEqual(err.exception.code, 0)

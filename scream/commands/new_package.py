@@ -1,5 +1,5 @@
 import os
-from scream.files import PackageReadme, ModuleExample, SetupCfg, SetupPy, TestExample
+from scream.files import Deploy, PackageReadme, ModuleExample, SetupCfg, SetupPy, TestExample
 from scream.files.util import File
 
 NAMESPACE_INIT = "__path__ = __import__('pkgutil').extend_path(__path__, __name__)\n"
@@ -38,6 +38,7 @@ def new_package(d, namespaces, package_name):
     File('__init__.py', '').write(tests_dir)
     TestExample(full_package_name).write(tests_dir)
 
+    Deploy(package_name).write(d)
     PackageReadme(full_package_name).write(d)
     SetupCfg(setup_py_package_name).write(d)
     SetupPy().write(d)

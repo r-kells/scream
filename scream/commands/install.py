@@ -22,7 +22,7 @@ def install(package):
         package (str): A local package name. Ex: `company_examplea`.
 
     """
-    changed_packages = get_changed_packages()
+    changed_packages = get_changed_packages(verbose=False)
 
     package = Package(package_name=package)
     logging.info("Installing package: `{}`...".format(package.package_name))
@@ -46,7 +46,8 @@ def _install_package(package, changed_packages=None):
 
     Args:
         package (str): a package name to install
-        changed_packages (list[Package])
+        changed_packages (list[Package]) Since we might have changed multiple packages in this commit
+            re-build wheels for all changed package dependencies.
     """
     if changed_packages is None:
         changed_packages = []
@@ -59,8 +60,6 @@ def _install_package(package, changed_packages=None):
     for other_deps in package.other_dependencies:
         run(install_cmd + [other_deps])
     try:
-        # Since we might have changed multiple packages in this commit
-        # Re-build wheels for all changed package dependencies.
         if package.package_name in changed_packages:
             logging.info("Package {} has changed, rebuilding wheel.".format(package.package_name))
             run(create_wheel_cmd)

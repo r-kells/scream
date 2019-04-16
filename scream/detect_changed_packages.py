@@ -42,9 +42,10 @@ def get_changed_packages_and_dependents():
     return impacted_packages
 
 
-def get_changed_packages():
+def get_changed_packages(verbose=True):
     """Identifies local packages that have changed from HEAD compared to the parent branch.
-
+    Args:
+        verbose (bool): controls if we should print logs to console.
     Returns:
         (set): a unique set local package names.
     """
@@ -56,12 +57,13 @@ def get_changed_packages():
     packages_changed = get_unique_changed_packages(changed_files)
 
     if packages_changed:
-        logging.info(
-            "The following packages have changes compared to branch: `{parent_branch}`:\n\t{packages}\n".format(
-                parent_branch=parent_branch,
-                packages='\n\t'.join(list(packages_changed.keys()))
+        if verbose:
+            logging.info(
+                "The following packages have changes compared to branch: `{parent_branch}`:\n\t{packages}\n".format(
+                    parent_branch=parent_branch,
+                    packages='\n\t'.join(list(packages_changed.keys()))
+                )
             )
-        )
     else:
         logging.info(
             'Either nothing has changed, or there are no valid packages in your current directory.'

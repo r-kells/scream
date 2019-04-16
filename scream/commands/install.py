@@ -2,6 +2,7 @@ import logging
 import os
 import subprocess
 
+from scream.detect_changed_packages import get_changed_packages
 from ..package import Package
 
 
@@ -23,16 +24,13 @@ def install(package):
     """
     package = Package(package_name=package)
     logging.info("Installing package: `{}`...".format(package.package_name))
-    # Before checking dependencies, see if we can install straight away.
-    try:
-        _install_package(package)
-    except NoMatchingDistributionException:
 
-        for dependent_package in package.dependencies:
-            _install_package(dependent_package)
+    for dependent_package in package.local_dependencies:
+        logging.info("Installing dependency: `{}`...".format(dependent_package.package_name))
+        _install_package(dependent_package)
 
-        # finally install the package that was originally requested.
-        _install_package(package)
+    # finally install the package that was originally requested.
+    _install_package(package)
 
     logging.info("Installation complete.")
 
@@ -52,9 +50,17 @@ def _install_package(package):
     create_wheel_cmd = ["pip", "wheel", "-f", wheelhouse_dir, "-w", wheelhouse_dir, package.package_dir]
     install_cmd = ["pip", "install", "-f", wheelhouse_dir]
 
+    changed_packages = get_changed_packages()
+
     for other_deps in package.other_dependencies:
         run(install_cmd + [other_deps])
     try:
+        # Since we might have changed multiple packages in this commit
+        # Re-build wheels for all changed package dependencies.
+        if package.package_name in changed_packages:
+            logging.info("Package {} has changed, rebuilding wheel.".format(package.package_name))
+            run(create_wheel_cmd)
+
         run(install_cmd + [package.package_name])
     except NoMatchingDistributionException:
         run(create_wheel_cmd)

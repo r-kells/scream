@@ -2,7 +2,7 @@
 > Still very much a WIP. Lots of work to be done; please open issues or pull requests.
 
 ![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
-![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)
+![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 What you do when you see a bunch of python... packages.
@@ -97,7 +97,7 @@ Packages that require testing:
 * `scream build` - Builds a python wheel and bundles it with all it's dependencies as wheels. (TODO)
 
 ## Quickstart
-> By default packages are tested against python 3.6.x, which means you have it available on your PATH.
+> By default packages are tested against python 3.7.x, which means you have it available on your PATH.
 If you about different versions, please see the [configuration options](#Configuration).
 
 ```bash

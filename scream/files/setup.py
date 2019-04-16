@@ -16,7 +16,7 @@ long_description = file: README.md
 # Namespace packages are not zip safe
 zip_safe = False
 packages = find:
-python_requires = 3.6
+python_requires = 3.7
 {install_requires}
 
 # dependency_links =

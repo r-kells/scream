@@ -7,8 +7,8 @@ import subprocess
 import sys
 
 from scream import utils
-from scream.commands import install, init_monorepo, new_package, test, PackageInstallationException
-from scream.detect_changed_packages import get_changed_packages, NoGitException
+from scream.commands import deploy, install, init_monorepo, new_package, test, PackageInstallationException
+from scream.detect_changed_packages import NoGitException
 from scream.monorepo import Monorepo
 from scream.package import PackageDoesNotExistException, PackageNamingException, validate_package_name
 
@@ -20,7 +20,7 @@ Commands:
     new <package_name>      - Creates new template package.
     test [--dry-run][--all] - Test packages that have changed or who's dependencies have changed since master.
     install <package_name>  - Installs a package.
-    deploy <name>           - Runs deploy.py in your package directory.
+    deploy <package_name>   - Runs deploy.py in your package directory.
     build                   - Builds a python wheel and bundles it with all it's dependencies as wheels.
 """
 
@@ -142,19 +142,16 @@ class Scream(object):
     def deploy(self):
         """
         Run a deploy script.
-        For packages that have changed (or manually specified by --name=).
+        For packages that have changed (or manually specified by --package_name <mypackage>).
         """
         parser = argparse.ArgumentParser()
-        parser.add_argument('--name', dest='name')
+        parser.add_argument('--package_name', dest='package_name')
         args = parser.parse_args(sys.argv[2:])
 
         if args.name is None:
-            to_deploy = get_changed_packages(verbose=False)
-            for _, package in to_deploy.items():
-                _, package = package.package_name.split('_')
-                subprocess.call(["python", "{package}/deploy.py".format(package=package)])
+            deploy()
         else:
-            subprocess.call(["python", "{package}/deploy.py".format(package=args.name)])
+            deploy(package_name=args.package_name)
 
 
 if __name__ == "__main__":

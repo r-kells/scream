@@ -147,7 +147,7 @@ class Scream(object):
         parser.add_argument('--package_name', dest='package_name')
         args = parser.parse_args(sys.argv[2:])
 
-        if args.name is None:
+        if args.package_name is None:
             deploy()
         else:
             deploy(package_name=args.package_name)

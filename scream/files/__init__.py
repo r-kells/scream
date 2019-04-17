@@ -1,3 +1,4 @@
+from .deploy import Deploy
 from .docs import Docs
 from .git import GitIgnore
 from .module import ModuleExample, TestExample

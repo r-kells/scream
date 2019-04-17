@@ -6,7 +6,7 @@ import os
 import sys
 
 from scream import utils
-from scream.commands import deploy, install, init_monorepo, new_package, test, PackageInstallationException
+from scream.commands import deploy_packages, install, init_monorepo, new_package, test, PackageInstallationException
 from scream.detect_changed_packages import NoGitException
 from scream.monorepo import Monorepo
 from scream.package import PackageDoesNotExistException, PackageNamingException, validate_package_name
@@ -148,9 +148,9 @@ class Scream(object):
         args = parser.parse_args(sys.argv[2:])
 
         if args.package_name is None:
-            deploy()
+            deploy_packages()
         else:
-            deploy(package_name=args.package_name)
+            deploy_packages(package_name=args.package_name)
 
 
 if __name__ == "__main__":

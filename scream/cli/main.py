@@ -20,6 +20,7 @@ Commands:
     new <package_name>      - Creates new template package.
     test [--dry-run][--all] - Test packages that have changed or who's dependencies have changed since master.
     install <package_name>  - Installs a package.
+    deploy <name>           - Runs deploy.py in your package directory.
     build                   - Builds a python wheel and bundles it with all it's dependencies as wheels.
 """
 
@@ -140,7 +141,8 @@ class Scream(object):
 
     def deploy(self):
         """
-        For packages that have changed (or manually specified). Run the deploy script.
+        Run a deploy script.
+        For packages that have changed (or manually specified by --name=).
         """
         parser = argparse.ArgumentParser()
         parser.add_argument('--name', dest='name')

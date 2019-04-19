@@ -17,14 +17,14 @@ from test.base_tests import Base, MyPackage
 
 class TestChangedPackages(Base.TestNewMonorepoGitInit):
 
-    def test_get_parent_no_parent(self):
-        with chdir(self.TMP_DIR):
-            self.assertEqual(detect_changed_packages.get_parent_branch(), "master")
-
-    def test_get_parent_branch(self):
-        with chdir(self.TMP_DIR):
-            subprocess.call(["git", "checkout", "-b", "otherbranch"])
-            self.assertEqual(detect_changed_packages.get_parent_branch(), "master")
+    # def test_get_parent_no_parent(self):
+    #     with chdir(self.TMP_DIR):
+    #         self.assertEqual(detect_changed_packages.get_parent_branch(), "master")
+    #
+    # def test_get_parent_branch(self):
+    #     with chdir(self.TMP_DIR):
+    #         subprocess.call(["git", "checkout", "-b", "otherbranch"])
+    #         self.assertEqual(detect_changed_packages.get_parent_branch(), "master")
 
     def test_no_changed_packages(self):
         with chdir(self.TMP_DIR):
@@ -64,6 +64,38 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
 
             changed_packages = detect_changed_packages.get_unique_changed_packages(input_changes)
             changed_package = list(changed_packages.keys())[0]
+
+        self.assertEqual(changed_package, expected_changes)
+
+    def test_changed_packages_merge_master_detect_changes(self):
+        expected_changes = ["company_packaged", "company_packagec"]
+
+        with chdir(self.TMP_DIR):
+            subprocess.call(["git", "checkout", "-b", "feature_branch"])
+
+            package_c = MyPackage(d=self.TMP_DIR, name="packagec")
+
+            os.mkdir(package_c.name)
+            SetupCfg(package_c.full_name).write(package_c.package_dir)
+
+            subprocess.call(["git", "add", "."])
+            subprocess.call(["git", "commit", "-m", "first_commit"])
+
+            package_d = MyPackage(d=self.TMP_DIR, name="packaged")
+
+            os.mkdir(package_d.name)
+            SetupCfg(package_d.full_name).write(package_d.package_dir)
+
+            subprocess.call(["git", "add", "."])
+            subprocess.call(["git", "commit", "-m", "second_commit"])
+
+            subprocess.call(["git", "checkout", "master"])
+            subprocess.call(["git", "merge", "--no-ff", "feature_branch"])
+
+            subprocess.call(["git", "diff", "--name-only", "HEAD~1"])
+
+            changed_packages = detect_changed_packages.get_changed_packages()
+            changed_package = list(changed_packages.keys())
 
         self.assertEqual(changed_package, expected_changes)
 

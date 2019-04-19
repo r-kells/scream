@@ -121,20 +121,16 @@ def get_changed_files(parent_branch):
 
 
 def get_parent_branch():
-    parent_branch = subprocess.check_output(
-        "detect_parent_branch.sh", stderr=devnull).strip().decode('utf-8')
-
-    if parent_branch == '':
-        # If no parent branch, get current branch at least
-        try:
-            parent_branch = subprocess.check_output(
-                ["git", "rev-parse", "--abbrev-ref", "HEAD"],
-                stderr=devnull,
-            ).strip().decode('utf-8')
-        except subprocess.CalledProcessError as err:
-            if err.returncode == NO_GIT_ERROR_CODE:
-                raise NoGitException
-            else:
-                raise
+    master = "master"
+    try:
+        parent_branch = subprocess.check_output(
+            ["git", "merge-base", "HEAD", master],
+            stderr=devnull,
+        ).strip().decode('utf-8')
+    except subprocess.CalledProcessError as err:
+        if err.returncode == NO_GIT_ERROR_CODE:
+            raise NoGitException
+        else:
+            raise
 
     return parent_branch

@@ -113,7 +113,7 @@ def get_changed_files(parent_branch):
     except subprocess.CalledProcessError as err:
         err_out = err.output.decode("utf-8")
         logging.info(err_out)
-        raise NoGitException(err_out)
+        return []
     else:
         changed_files = parse_git_diff(result)
 
@@ -121,13 +121,24 @@ def get_changed_files(parent_branch):
 
 
 def get_parent_branch():
+
+    try:
+        current_branch = subprocess.check_output(["git", "symbolic-ref", "-q", "--short", "HEAD"])\
+            .strip().decode("utf-8")
+    except subprocess.CalledProcessError:
+        raise NoGitException
+    else:
+        if current_branch == "master":
+            return "HEAD~1"
     parent_branch = "origin/master"
 
     try:
         subprocess.check_call(["git", "fetch", "origin", "master:origin/master"], stderr=devnull)
     except subprocess.CalledProcessError:
         logging.info("No remote master detected, comparing to local master.")
+
         parent_branch = "master"
+
     return parent_branch
 
     # TODO

@@ -121,17 +121,12 @@ def get_changed_files(parent_branch):
 
 
 def get_parent_branch():
-
-    try:
-        current_branch = subprocess.check_output(["git", "symbolic-ref", "-q", "--short", "HEAD"])\
-            .strip().decode("utf-8")
-    except subprocess.CalledProcessError:
-        raise NoGitException
-    else:
-        if current_branch == "master":
-            return "HEAD~1"
+    # By default its easier to assume we are comparing everything to master.
+    # If we can't find a remote master, use local master.
+    # Finally, if the CURRENT branch IS master, then check changes since HEAD~1
     parent_branch = "origin/master"
 
+    # Pull in origin/master
     try:
         subprocess.check_call(["git", "fetch", "origin", "master:origin/master"], stderr=devnull)
     except subprocess.CalledProcessError:
@@ -139,19 +134,15 @@ def get_parent_branch():
 
         parent_branch = "master"
 
-    return parent_branch
-
-    # TODO
-    # This could be optimized to only get changes from previous branch divergance.
-
-    # try:
-    #     parent_branch = subprocess.check_output(
-    #         ["git", "merge-base", "HEAD", master], stderr=devnull).strip().decode('utf-8')
-    # except subprocess.CalledProcessError as err:
-    #     if err.returncode == NO_GIT_ERROR_CODE:
-    #         return "HEAD~1"
-    #     else:
-    #         raise
-    #     parent_branch = 'HEAD~1'
-    #
-    # return parent_branch
+    try:
+        divergent_commit = subprocess.check_output(["git", "merge-base", "HEAD", parent_branch])\
+            .strip().decode("utf-8")
+    except subprocess.CalledProcessError:
+            raise NoGitException
+    else:
+        # Codeship ENV variable to get branch properly.
+        ci_commit_id = os.getenv("CI_COMMIT_ID", None)
+        if divergent_commit != ci_commit_id:
+            return divergent_commit
+        else:
+            return "HEAD~1"

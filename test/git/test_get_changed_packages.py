@@ -49,6 +49,8 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
         expected_changes = ["company_packagea", "company_packageb"]
 
         with chdir(self.TMP_DIR):
+            subprocess.call(["git", "checkout", "-b", "new_branch"])
+
             package_a = MyPackage(d=self.TMP_DIR, name="packagea")
 
             os.mkdir(package_a.name)

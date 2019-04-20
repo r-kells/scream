@@ -17,14 +17,9 @@ from test.base_tests import Base, MyPackage
 
 class TestChangedPackages(Base.TestNewMonorepoGitInit):
 
-    # def test_get_parent_no_parent(self):
-    #     with chdir(self.TMP_DIR):
-    #         self.assertEqual(detect_changed_packages.get_parent_branch(), "master")
-    #
-    # def test_get_parent_branch(self):
-    #     with chdir(self.TMP_DIR):
-    #         subprocess.call(["git", "checkout", "-b", "otherbranch"])
-    #         self.assertEqual(detect_changed_packages.get_parent_branch(), "master")
+    def test_get_parent(self):
+        with chdir(self.TMP_DIR):
+            self.assertEqual(detect_changed_packages.get_parent_branch(), "master")
 
     def test_no_changed_packages(self):
         with chdir(self.TMP_DIR):

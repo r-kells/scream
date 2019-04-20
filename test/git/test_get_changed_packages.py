@@ -97,7 +97,7 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
             changed_packages = detect_changed_packages.get_changed_packages()
             changed_package = list(changed_packages.keys())
 
-        self.assertEqual(changed_package, expected_changes)
+        self.assertEqual(sorted(changed_package), sorted(expected_changes))
 
     def test_changed_packages_ignore_changes(self):
         input_changes = [["A", "packagea/README.md"]]

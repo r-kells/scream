@@ -130,6 +130,7 @@ class TestCliDeploy(Base.TestNewMonorepoGitInit):
     """Make sure all `scream install` commands run, with or without any packages existing.
     """
     deploy_cmd = ["scream", "deploy", "--package_name", "packagea"]
+    deploy_all_cmd = ["scream", "deploy"]
 
     def test_deploy_no_packages_created(self):
         with chdir(self.TMP_DIR):
@@ -152,6 +153,12 @@ class TestCliDeploy(Base.TestNewMonorepoGitInit):
 
         with chdir(self.TMP_DIR):
             with mock.patch.object(sys, "argv", self.deploy_cmd):
+                with self.assertRaises(SystemExit) as err:
+                    scream.Scream()
+                self.assertEqual(err.exception.code, 0)
+
+        with chdir(self.TMP_DIR):
+            with mock.patch.object(sys, "argv", self.deploy_all_cmd):
                 with self.assertRaises(SystemExit) as err:
                     scream.Scream()
                 self.assertEqual(err.exception.code, 0)

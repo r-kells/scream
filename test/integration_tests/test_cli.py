@@ -16,7 +16,7 @@ from test.base_tests import Base
 
 
 class TestCliInitMonorepo(Base.TestNewMonorepo):
-    """Make sure `scream init` runs, and all other commands gracefully fail if `scream init` hasn't run.
+    """Make sure `scream init` runs, and all other commands gracefully fail.
     """
 
     def test_init_monorepo(self):
@@ -129,7 +129,7 @@ class TestCliInstall(Base.TestNewMonorepoGitInit):
 class TestCliDeploy(Base.TestNewMonorepoGitInit):
     """Make sure all `scream install` commands run, with or without any packages existing.
     """
-    deploy_cmd = ["scream", "deploy", "--name", "com_packagea"]
+    deploy_cmd = ["scream", "deploy", "--package_name", "packagea"]
 
     def test_deploy_no_packages_created(self):
         with chdir(self.TMP_DIR):

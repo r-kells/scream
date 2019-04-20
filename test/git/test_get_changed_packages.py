@@ -51,8 +51,7 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
         self.assertEqual(changed_files, expected_changes, parent_branch)
 
     def test_changed_packages(self):
-        input_changes = [["A", "packagea/module.py"]]
-        expected_changes = "company_packagea"
+        expected_changes = ["company_packagea", "company_packageb"]
 
         with chdir(self.TMP_DIR):
             package_a = MyPackage(d=self.TMP_DIR, name="packagea")
@@ -61,11 +60,20 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
             SetupCfg(package_a.full_name).write(package_a.package_dir)
 
             subprocess.call(["git", "add", "."])
+            subprocess.call(["git", "commit", "-m", "first_commit"])
 
-            changed_packages = detect_changed_packages.get_unique_changed_packages(input_changes)
-            changed_package = list(changed_packages.keys())[0]
+            package_b = MyPackage(d=self.TMP_DIR, name="packageb")
 
-        self.assertEqual(changed_package, expected_changes)
+            os.mkdir(package_b.name)
+            SetupCfg(package_b.full_name).write(package_b.package_dir)
+
+            subprocess.call(["git", "add", "."])
+            subprocess.call(["git", "commit", "-m", "second_commit"])
+
+            changed_packages = detect_changed_packages.get_changed_packages()
+            changed_package = list(changed_packages.keys())
+
+        self.assertEqual(sorted(changed_package), sorted(expected_changes))
 
     def test_changed_packages_merge_master_detect_changes(self):
         expected_changes = ["company_packaged", "company_packagec"]

@@ -1,7 +1,6 @@
 import logging
 import os
 import subprocess
-import sys
 
 from scream.package import Package, PackageDoesNotExistException
 
@@ -113,7 +112,8 @@ def get_changed_files(parent_branch):
 
     except subprocess.CalledProcessError as err:
         err_out = err.output.decode("utf-8")
-        sys.exit('\nUnknown git error: {}'.format(err_out))
+        logging.info(err_out)
+        raise NoGitException(err_out)
     else:
         changed_files = parse_git_diff(result)
 
@@ -121,16 +121,26 @@ def get_changed_files(parent_branch):
 
 
 def get_parent_branch():
-    master = "master"
-    try:
-        parent_branch = subprocess.check_output(
-            ["git", "merge-base", "HEAD", master],
-            stderr=devnull,
-        ).strip().decode('utf-8')
-    except subprocess.CalledProcessError as err:
-        if err.returncode == NO_GIT_ERROR_CODE:
-            raise NoGitException
-        else:
-            raise
+    parent_branch = "origin/master"
 
+    try:
+        subprocess.check_call(["git", "fetch", "origin", "master:origin/master"], stderr=devnull)
+    except subprocess.CalledProcessError:
+        logging.info("No remote master detected, comparing to local master.")
+        parent_branch = "master"
     return parent_branch
+
+    # TODO
+    # This could be optimized to only get changes from previous branch divergance.
+
+    # try:
+    #     parent_branch = subprocess.check_output(
+    #         ["git", "merge-base", "HEAD", master], stderr=devnull).strip().decode('utf-8')
+    # except subprocess.CalledProcessError as err:
+    #     if err.returncode == NO_GIT_ERROR_CODE:
+    #         return "HEAD~1"
+    #     else:
+    #         raise
+    #     parent_branch = 'HEAD~1'
+    #
+    # return parent_branch

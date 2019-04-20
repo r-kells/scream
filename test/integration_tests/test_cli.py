@@ -16,7 +16,7 @@ from test.base_tests import Base
 
 
 class TestCliInitMonorepo(Base.TestNewMonorepo):
-    """Make sure `scream init` runs, and all other commands gracefully fail if `scream init` hasn't run.
+    """Make sure `scream init` runs, and all other commands gracefully fail.
     """
 
     def test_init_monorepo(self):

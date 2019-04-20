@@ -113,7 +113,6 @@ class Scream(object):
                             "Please make your first commit then try again, "
                             "or try using one of the flags below.\n")
             parser.print_help()
-            return
 
     def install(self):
         parser = argparse.ArgumentParser()
@@ -128,6 +127,11 @@ class Scream(object):
         except PackageInstallationException as e:
             logging.error(e)
             sys.exit(1)
+        except NoGitException:
+            # Install checks git to see what packages have changed to decide
+            # if we need to refresh the wheelhouse cache.
+            # Running install from the CLI is fine not to have your first commit yet.
+            pass
 
     def build(self):
         help = "WARNING: NOT IMPLIMENTED - Build a versioned zip that contains the package " \

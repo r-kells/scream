@@ -121,13 +121,20 @@ def get_changed_files(parent_branch):
 
 
 def get_parent_branch():
+
+    current_branch = subprocess.check_output(["git", "symbolic-ref", "-q", "--short", "HEAD"]).strip().decode("utf-8")
+    if current_branch == "master":
+        return "HEAD~1"
+
     parent_branch = "origin/master"
 
     try:
         subprocess.check_call(["git", "fetch", "origin", "master:origin/master"], stderr=devnull)
     except subprocess.CalledProcessError:
         logging.info("No remote master detected, comparing to local master.")
+
         parent_branch = "master"
+
     return parent_branch
 
     # TODO

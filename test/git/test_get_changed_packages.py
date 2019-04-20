@@ -95,9 +95,7 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
             subprocess.call(["git", "commit", "-m", "second_commit"])
 
             subprocess.call(["git", "checkout", "master"])
-            subprocess.call(["git", "merge", "--no-ff", "feature_branch"])
-
-            subprocess.call(["git", "diff", "--name-only", "HEAD~1"])
+            subprocess.call(["git", "merge", "--no-ff", "feature_branch", "-m", "merge to master"])
 
             changed_packages = detect_changed_packages.get_changed_packages()
             changed_package = list(changed_packages.keys())

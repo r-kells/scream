@@ -14,6 +14,8 @@ class TestPackages(Base.TestNewMonorepoGitInit):
         super(TestPackages, cls).setUp()
         # Create a fake package that's available to test.
         with chdir(cls.TMP_DIR):
+            subprocess.call(["git", "checkout", "-b", "new_branch"])
+
             package_a = MyPackage(d=cls.TMP_DIR, name="packagea")
 
             os.mkdir(package_a.name)

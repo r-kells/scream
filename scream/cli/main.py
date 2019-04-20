@@ -7,7 +7,6 @@ import sys
 
 from scream import utils
 from scream.commands import deploy_packages, install, init_monorepo, new_package, test, PackageInstallationException
-from scream.detect_changed_packages import NoGitException
 from scream.monorepo import Monorepo
 from scream.package import PackageDoesNotExistException, PackageNamingException, validate_package_name
 
@@ -106,13 +105,7 @@ class Scream(object):
                             help="Test all packages, ragardless of git status.")
         args = parser.parse_args(sys.argv[2:])
 
-        try:
-            test(package_name=args.name, dry_run=args.dry_run, all=args.all)
-        except NoGitException:
-            logging.warning("`git` repository has nothing to compare.\n\n"
-                            "Please make your first commit then try again, "
-                            "or try using one of the flags below.\n")
-            parser.print_help()
+        test(package_name=args.name, dry_run=args.dry_run, all=args.all)
 
     def install(self):
         parser = argparse.ArgumentParser()
@@ -127,11 +120,6 @@ class Scream(object):
         except PackageInstallationException as e:
             logging.error(e)
             sys.exit(1)
-        except NoGitException:
-            # Install checks git to see what packages have changed to decide
-            # if we need to refresh the wheelhouse cache.
-            # Running install from the CLI is fine not to have your first commit yet.
-            pass
 
     def build(self):
         help = "WARNING: NOT IMPLIMENTED - Build a versioned zip that contains the package " \
@@ -153,6 +141,7 @@ class Scream(object):
 
         if args.package_name is None:
             deploy_packages()
+
         else:
             deploy_packages(package_name=args.package_name)
 

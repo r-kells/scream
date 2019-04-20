@@ -19,20 +19,20 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
 
     def test_get_parent(self):
         with chdir(self.TMP_DIR):
-            self.assertEqual(detect_changed_packages.get_parent_branch(), "master")
+            self.assertEqual(detect_changed_packages.get_parent_branch(), "HEAD~1")
 
     def test_no_changed_packages(self):
         with chdir(self.TMP_DIR):
-            parent_branch = detect_changed_packages.get_parent_branch()
-            changed_files = detect_changed_packages.get_changed_files(
-                parent_branch)
+            changed_files = detect_changed_packages.get_changed_packages()
 
-        self.assertEqual(changed_files, [], parent_branch)
+        self.assertEqual(changed_files, {})
 
     def test_changed_files(self):
         expected_changes = [['A', 'packagea/setup.cfg']]
 
         with chdir(self.TMP_DIR):
+            subprocess.call(["git", "checkout", "-b", "example_feature"])
+
             package_a = MyPackage(d=self.TMP_DIR, name="packagea")
 
             os.mkdir(package_a.name)

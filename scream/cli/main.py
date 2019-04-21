@@ -143,7 +143,10 @@ class Scream(object):
             deploy_packages()
 
         else:
-            deploy_packages(package_name=args.package_name)
+            try:
+                deploy_packages(package_name=args.package_name)
+            except PackageDoesNotExistException:
+                logging.info("That package does not exist!")
 
 
 if __name__ == "__main__":

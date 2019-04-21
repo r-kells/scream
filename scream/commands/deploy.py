@@ -2,6 +2,7 @@ import subprocess
 import sys
 
 from scream import detect_changed_packages
+from scream.package import Package, PackageDoesNotExistException
 
 
 def deploy_packages(package_name=None):
@@ -19,6 +20,12 @@ def deploy_packages(package_name=None):
             if result != 0:
                 sys.exit(1)
     else:
-        result = subprocess.call(["python", "{package}/deploy.py".format(package=package_name)])
+        try:
+            package = Package(package_name=package_name)
+        except PackageDoesNotExistException:
+            raise
+        else:
+            package = package.package_name.split('_')
+            result = subprocess.call(["python", "{package}/deploy.py".format(package=package[0])])
         if result != 0:
             sys.exit(1)

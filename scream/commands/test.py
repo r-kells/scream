@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import sys
 
 from scream.detect_changed_packages import get_changed_packages_and_dependents
 
@@ -15,7 +16,10 @@ def test(package_name=None, all=False, dry_run=False):
     """
     cmd = build_test_cmd(package_name, all, dry_run)
     if cmd:
-        subprocess.call(cmd)
+        result = subprocess.check_call(cmd)
+        # Explicitly fail if tests dont succeed, since this call is run in a subprocess.
+        if result != 0:
+            sys.exit(1)
 
 
 def build_test_cmd(package_name=None, all=False, dry_run=False):

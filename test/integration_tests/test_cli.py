@@ -108,11 +108,11 @@ class TestCliInstall(Base.TestNewMonorepoGitInit):
                 self.assertEqual(err.exception.code, 1)
 
     def test_install_with_packages_created(self):
-        cmd = ["scream", "new", "com.packagea"]
+        new_cmd = ["scream", "new", "com.packagea"]
 
         with chdir(self.TMP_DIR):
             # Add a package.
-            with mock.patch.object(sys, "argv", cmd):
+            with mock.patch.object(sys, "argv", new_cmd):
                 with self.assertRaises(SystemExit) as err:
                     scream.Scream()
                 self.assertEqual(err.exception.code, 0)

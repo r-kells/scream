@@ -58,7 +58,7 @@ def get_changed_packages(verbose=True):
     if packages_changed:
         if verbose:
             logging.info(
-                "The following packages have changes compared to branch: `{parent_branch}`:\n\t{packages}\n".format(
+                "The following packages have changes compared to commit: `{parent_branch}`:\n\t{packages}\n".format(
                     parent_branch=parent_branch,
                     packages='\n\t'.join(list(packages_changed.keys()))
                 )

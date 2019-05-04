@@ -1,8 +1,6 @@
 import logging
-import os
 import subprocess
 
-from scream.detect_changed_packages import get_changed_packages
 from ..package import Package
 
 
@@ -16,20 +14,28 @@ class PackageInstallationException(Exception):
 
 def install(package):
     """
-    Installs individual packages and their dependents then caches them as wheels in the `wheelhouse` dir.
+    Installs individual packages and their dependents.
 
     Args:
         package (str): A local package name. Ex: `company_examplea`.
 
     """
-    changed_packages = get_changed_packages(verbose=False)
-
     package = Package(package_name=package)
     logging.info("Installing package: `{}`...".format(package.package_name))
 
-    for dependent_package in package.local_dependencies:
-        logging.info("Installing dependency: `{}`...".format(dependent_package.package_name))
-        _install_package(dependent_package, changed_packages)
+    # Try to install package directly, if fails install dependencies first.
+    try:
+        _install_package(package)
+        return
+    except NoMatchingDistributionException:
+        # Must need to install dependencies first.
+        pass
+
+    dependency_tree = get_dependency_tree(package)
+
+    for p in dependency_tree:
+        logging.info("Installing {}.".format(p.package_name))
+        _install_package(p)
 
     # finally install the package that was originally requested.
     _install_package(package)
@@ -37,37 +43,14 @@ def install(package):
     logging.info("Installation complete.")
 
 
-def _install_package(package, changed_packages=None):
+def _install_package(package):
     """
-    Tries to install `package` from the wheelhouse cache.
-    If it doesnt exist:
-        1. Create the wheel, so future packages can skip the work.
-        2. Install from the wheelhouse.
+    Tries to install `package` from local dir.
 
     Args:
         package (str): a package name to install
-        changed_packages (list[Package]) Since we might have changed multiple packages in this commit
-            re-build wheels for all changed package dependencies.
     """
-    if changed_packages is None:
-        changed_packages = []
-
-    wheelhouse_dir = os.path.join(os.path.dirname(package.package_dir), "wheelhouse")
-
-    create_wheel_cmd = ["pip", "wheel", "-f", wheelhouse_dir, "-w", wheelhouse_dir, package.package_dir]
-    install_cmd = ["pip", "install", "-f", wheelhouse_dir]
-
-    for other_deps in package.other_dependencies:
-        run(install_cmd + [other_deps])
-    try:
-        if package.package_name in changed_packages:
-            logging.info("Package {} has changed, rebuilding wheel.".format(package.package_name))
-            run(create_wheel_cmd)
-
-        run(install_cmd + [package.package_name])
-    except NoMatchingDistributionException:
-        run(create_wheel_cmd)
-        run(install_cmd + [package.package_name])
+    run(["pip", "install", "-e", package.package_dir])
 
 
 def run(cmd):
@@ -88,3 +71,19 @@ def run(cmd):
         if "No matching distribution found" in err_str:
             raise NoMatchingDistributionException(err_str)
         raise PackageInstallationException(err_str)
+
+
+def get_dependency_tree(package, dependency_tree=None):
+    """Recursively fetch depth first dependency tree of local packages.
+
+    Return list(Package):
+        A reversed dependency tree: the order to install packages.
+    """
+    if dependency_tree is None:
+        dependency_tree = []
+
+    for dependent_package in package.local_dependencies:
+        dependency_tree.append(dependent_package)
+        get_dependency_tree(dependent_package)
+
+    return reversed(dependency_tree)

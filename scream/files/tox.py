@@ -53,7 +53,7 @@ omit =
 TOX_COMMAND_TEMPL = """\
     {package_name}: flake8 {package_dir} --config={toxinidir}/tox.ini --statistics
     {package_name}: scream install {package_name}
-    {package_name}: coverage run -a -m unittest discover -v -t {package_dir} -s {package_dir}/tests
+    {package_name}: coverage run -a -m unittest discover -v -s {package_dir}/tests
 
 """
 

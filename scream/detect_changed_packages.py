@@ -38,7 +38,7 @@ def get_changed_packages_and_dependents(all_packages):
                     impacted_packages.update({package.package_name: package})
 
     if impacted_packages:
-        logging.info("Packages that require testing:\n\t{}".format('\n\t'.join(
+        logging.info("Packages that require testing / deploying:\n\t{}".format('\n\t'.join(
             list(impacted_packages.keys()))))
 
     return impacted_packages

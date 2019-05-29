@@ -140,7 +140,7 @@ class Scream(object):
         args = parser.parse_args(sys.argv[2:])
 
         if args.package_name is None:
-            deploy_packages()
+            deploy_packages(all_packages=self.monorepo.config.packages)
 
         else:
             try:

@@ -2,6 +2,7 @@ import logging
 import os
 import subprocess
 
+from scream.commands.install import get_dependency_tree
 from scream.package import Package, PackageDoesNotExistException
 
 NO_GIT_ERROR_CODE = 128
@@ -17,7 +18,7 @@ class NoGitException(Exception):
     pass
 
 
-def get_changed_packages_and_dependents():
+def get_changed_packages_and_dependents(all_packages):
     """A helper function that gets the subpackages that need to be tested or built or deployed.
 
     Returns:
@@ -28,11 +29,13 @@ def get_changed_packages_and_dependents():
     impacted_packages = {}
 
     for package_name, package in changed_packages.items():
-
         impacted_packages.update({package_name: package})
 
-        for dependency in package.local_dependencies:
-            impacted_packages.update({dependency.package_name: dependency})
+        for package in all_packages:
+            dependency_tree = get_dependency_tree(package)
+            for dependency in dependency_tree:
+                if dependency.package_name in changed_packages.keys():
+                    impacted_packages.update({package.package_name: package})
 
     if impacted_packages:
         logging.info("Packages that require testing:\n\t{}".format('\n\t'.join(
@@ -100,7 +103,7 @@ def get_unique_changed_packages(diffs):
         # Multiple files could have changed in the same package, but we only want it once.
         if package.package_name not in packages_changed:
             packages_changed.update({package.package_name: package})
-
+    print(packages_changed)
     return packages_changed
 
 
@@ -135,10 +138,10 @@ def get_parent_branch():
         parent_branch = "master"
 
     try:
-        divergent_commit = subprocess.check_output(["git", "merge-base", "HEAD", parent_branch])\
+        divergent_commit = subprocess.check_output(["git", "merge-base", "HEAD", parent_branch]) \
             .strip().decode("utf-8")
     except subprocess.CalledProcessError:
-            raise NoGitException
+        raise NoGitException
     else:
         # Codeship ENV variable to get branch properly.
         ci_commit_id = os.getenv("CI_COMMIT_ID", None)

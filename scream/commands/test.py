@@ -5,16 +5,17 @@ import sys
 from scream.detect_changed_packages import get_changed_packages_and_dependents
 
 
-def test(package_name=None, all=False, dry_run=False):
+def test(all_packages=None, package_name=None, all=False, dry_run=False):
     """Tests all packages that have changed, or packages who's dependencies have changed.
     The tox testing environments can support running package tests against different python versions, etc.
     Args:
+        all_packages (list(Package)): all packages, to check for dependency changes
         package_name (str): the name of the package you want to test, including the namespace.
         dry_run (bool): if True, just print what packages have changed, and what packages would be tested.
         all (bool): if True, immediately test all packages (overrides dry-run).
 
     """
-    cmd = build_test_cmd(package_name, all, dry_run)
+    cmd = build_test_cmd(all_packages, package_name, all, dry_run)
     if cmd:
         result = subprocess.check_call(cmd)
         # Explicitly fail if tests dont succeed, since this call is run in a subprocess.
@@ -22,7 +23,7 @@ def test(package_name=None, all=False, dry_run=False):
             sys.exit(1)
 
 
-def build_test_cmd(package_name=None, all=False, dry_run=False):
+def build_test_cmd(all_packages=None, package_name=None, all=False, dry_run=False):
     cmd = []
 
     if package_name is not None:
@@ -33,7 +34,11 @@ def build_test_cmd(package_name=None, all=False, dry_run=False):
         cmd = ["tox"]
 
     else:
-        impacted_packages = get_changed_packages_and_dependents()
+        if all_packages is None:
+            raise Exception(
+                "Argument `all_packages` is required to be not None when `package_name` and `all` are not specified.")
+
+        impacted_packages = get_changed_packages_and_dependents(all_packages=all_packages)
         if impacted_packages:
 
             toxenvs_to_test_list = []

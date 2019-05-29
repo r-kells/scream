@@ -36,7 +36,7 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
             package_a = MyPackage(d=self.TMP_DIR, name="packagea")
 
             os.mkdir(package_a.name)
-            SetupCfg(package_a.full_name).write(package_a.package_dir)
+            SetupCfg(package_a.package_name).write(package_a.package_dir)
 
             subprocess.call(["git", "add", "."])
 
@@ -54,7 +54,7 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
             package_a = MyPackage(d=self.TMP_DIR, name="packagea")
 
             os.mkdir(package_a.name)
-            SetupCfg(package_a.full_name).write(package_a.package_dir)
+            SetupCfg(package_a.package_name).write(package_a.package_dir)
 
             subprocess.call(["git", "add", "."])
             subprocess.call(["git", "commit", "-m", "first_commit"])
@@ -62,7 +62,7 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
             package_b = MyPackage(d=self.TMP_DIR, name="packageb")
 
             os.mkdir(package_b.name)
-            SetupCfg(package_b.full_name).write(package_b.package_dir)
+            SetupCfg(package_b.package_name).write(package_b.package_dir)
 
             subprocess.call(["git", "add", "."])
             subprocess.call(["git", "commit", "-m", "second_commit"])
@@ -81,7 +81,7 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
             package_c = MyPackage(d=self.TMP_DIR, name="packagec")
 
             os.mkdir(package_c.name)
-            SetupCfg(package_c.full_name).write(package_c.package_dir)
+            SetupCfg(package_c.package_name).write(package_c.package_dir)
 
             subprocess.call(["git", "add", "."])
             subprocess.call(["git", "commit", "-m", "first_commit"])
@@ -89,7 +89,7 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
             package_d = MyPackage(d=self.TMP_DIR, name="packaged")
 
             os.mkdir(package_d.name)
-            SetupCfg(package_d.full_name).write(package_d.package_dir)
+            SetupCfg(package_d.package_name).write(package_d.package_dir)
 
             subprocess.call(["git", "add", "."])
             subprocess.call(["git", "commit", "-m", "second_commit"])
@@ -102,6 +102,55 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
             os.environ['CI_COMMIT_ID'] = parent_commit
 
             changed_packages = detect_changed_packages.get_changed_packages()
+            changed_package = list(changed_packages.keys())
+
+        self.assertEqual(sorted(changed_package), sorted(expected_changes))
+
+    def test_changed_packages_dependencies(self):
+        expected_changes = ["company_package_a", "company_package_b", "company_package_c"]
+
+        with chdir(self.TMP_DIR):
+            subprocess.call(["git", "checkout", "-b", "feature_branch"])
+
+            package_a = MyPackage(d=self.TMP_DIR, name="package_a")
+
+            os.mkdir(package_a.name)
+            SetupCfg(package_a.package_name).write(package_a.package_dir)
+
+            # package_b depends on package_a
+            package_b = MyPackage(d=self.TMP_DIR, name="package_b", local_dependencies=[package_a])
+            dependency = [package_b.local_dependencies[0].package_name]
+            SetupCfg(package_b.package_name, dependencies=dependency).write(package_b.package_dir)
+
+            # package_c depends on package_b
+            package_c = MyPackage(d=self.TMP_DIR, name="package_c", local_dependencies=[package_b])
+            dependency = [package_c.local_dependencies[0].package_name]
+            SetupCfg(package_c.package_name, dependencies=dependency).write(package_c.package_dir)
+
+            # SHOULD NOT BE DETECTED
+            package_d = MyPackage(d=self.TMP_DIR, name="package_d")
+
+            os.mkdir(package_d.name)
+            SetupCfg(package_d.package_name).write(package_d.package_dir)
+
+            subprocess.call(["git", "add", "."])
+            subprocess.call(["git", "commit", "-m", "commit"])
+
+            subprocess.call(["git", "checkout", "master"])
+            subprocess.call(["git", "merge", "--no-ff", "feature_branch", "-m", "merge to master"])
+
+            # New feature branch that changes package_a
+            subprocess.call(["git", "checkout", "-b", "feature_branch_2"])
+
+            new_file_path = os.path.join(package_a.package_dir, 'new_module.py')
+            with open(new_file_path, 'w') as f:
+                f.write('Hello world!\n')
+
+            subprocess.call(["git", "add", "."])
+            subprocess.call(["git", "commit", "-m", "commit"])
+
+            all_packages = [package_a, package_b, package_c, package_d]
+            changed_packages = detect_changed_packages.get_changed_packages_and_dependents(all_packages)
             changed_package = list(changed_packages.keys())
 
         self.assertEqual(sorted(changed_package), sorted(expected_changes))

@@ -51,13 +51,18 @@ class Base(object):
 
 
 class MyPackage(object):
-    """Boilerplate helper
+    """Package mock
     """
 
-    def __init__(self, d, name):
+    def __init__(self, d, name, local_dependencies=None):
         self.name = name
         self.namespaces = 'company'
 
         self.package_dir = os.path.join(d, self.name)
 
-        self.full_name = self.namespaces + '_' + self.name
+        self.package_name = self.namespaces + '_' + self.name
+
+        if local_dependencies:
+            self.local_dependencies = local_dependencies
+        else:
+            self.local_dependencies = []

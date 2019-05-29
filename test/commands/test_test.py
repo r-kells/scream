@@ -8,7 +8,6 @@ from test.base_tests import Base, MyPackage
 
 
 class TestPackages(Base.TestNewMonorepoGitInit):
-
     @classmethod
     def setUp(cls):
         super(TestPackages, cls).setUp()
@@ -16,17 +15,17 @@ class TestPackages(Base.TestNewMonorepoGitInit):
         with chdir(cls.TMP_DIR):
             subprocess.call(["git", "checkout", "-b", "new_branch"])
 
-            package_a = MyPackage(d=cls.TMP_DIR, name="packagea")
+            cls.package_a = MyPackage(d=cls.TMP_DIR, name="packagea", local_dependencies=[])
 
-            os.mkdir(package_a.name)
-            SetupCfg(package_a.full_name).write(package_a.package_dir)
+            os.mkdir(cls.package_a.name)
+            SetupCfg(cls.package_a.package_name).write(cls.package_a.package_dir)
 
             subprocess.call(["git", "add", "."])
 
     def test_test_commands(self):
         cmds_and_expected_output = [
-            ({"package_name": None}, ['tox', '-e', 'py37-company_packagea']),
-            ({"package_name": None, "dry_run": True}, None),
+            ({"all_packages": [self.package_a], "package_name": None}, ['tox', '-e', 'py37-company_packagea']),
+            ({"all_packages": [self.package_a], "package_name": None, "dry_run": True}, None),
             ({"all": True}, ['tox']),
             ({"package_name": "packagea"}, ['tox', '-e', 'packagea']),
             ({"package_name": "packagea", "all": True}, ['tox', '-e', 'packagea'])

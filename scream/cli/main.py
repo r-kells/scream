@@ -105,7 +105,7 @@ class Scream(object):
                             help="Test all packages, ragardless of git status.")
         args = parser.parse_args(sys.argv[2:])
 
-        test(package_name=args.name, dry_run=args.dry_run, all=args.all)
+        test(all_packages=self.monorepo.config.packages, package_name=args.name, dry_run=args.dry_run, all=args.all)
 
     def install(self):
         parser = argparse.ArgumentParser()

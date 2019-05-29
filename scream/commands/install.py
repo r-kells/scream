@@ -73,6 +73,7 @@ def run(cmd):
         raise PackageInstallationException(err_str)
 
 
+# TODO move to package.py
 def get_dependency_tree(package, dependency_tree=None):
     """Recursively fetch depth first dependency tree of local packages.
 
@@ -84,6 +85,5 @@ def get_dependency_tree(package, dependency_tree=None):
 
     for dependent_package in package.local_dependencies:
         dependency_tree.append(dependent_package)
-        get_dependency_tree(dependent_package)
-
+        get_dependency_tree(dependent_package, dependency_tree=dependency_tree)
     return reversed(dependency_tree)

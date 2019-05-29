@@ -103,7 +103,6 @@ def get_unique_changed_packages(diffs):
         # Multiple files could have changed in the same package, but we only want it once.
         if package.package_name not in packages_changed:
             packages_changed.update({package.package_name: package})
-    print(packages_changed)
     return packages_changed
 
 

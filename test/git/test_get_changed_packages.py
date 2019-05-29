@@ -107,7 +107,7 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
         self.assertEqual(sorted(changed_package), sorted(expected_changes))
 
     def test_changed_packages_dependencies(self):
-        expected_changes = ["company_package_a", "company_package_b"]
+        expected_changes = ["company_package_a", "company_package_b", "company_package_c"]
 
         with chdir(self.TMP_DIR):
             subprocess.call(["git", "checkout", "-b", "feature_branch"])
@@ -122,11 +122,16 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
             dependency = [package_b.local_dependencies[0].package_name]
             SetupCfg(package_b.package_name, dependencies=dependency).write(package_b.package_dir)
 
-            # THIS PACKAGE SHOULD NOT BE TESTED
-            package_c = MyPackage(d=self.TMP_DIR, name="package_c")
+            # package_c depends on package_b
+            package_c = MyPackage(d=self.TMP_DIR, name="package_c", local_dependencies=[package_b])
+            dependency = [package_c.local_dependencies[0].package_name]
+            SetupCfg(package_c.package_name, dependencies=dependency).write(package_c.package_dir)
 
-            os.mkdir(package_c.name)
-            SetupCfg(package_c.package_name).write(package_c.package_dir)
+            # SHOULD NOT BE DETECTED
+            package_d = MyPackage(d=self.TMP_DIR, name="package_d")
+
+            os.mkdir(package_d.name)
+            SetupCfg(package_d.package_name).write(package_d.package_dir)
 
             subprocess.call(["git", "add", "."])
             subprocess.call(["git", "commit", "-m", "commit"])
@@ -144,7 +149,7 @@ class TestChangedPackages(Base.TestNewMonorepoGitInit):
             subprocess.call(["git", "add", "."])
             subprocess.call(["git", "commit", "-m", "commit"])
 
-            all_packages = [package_a, package_b, package_c]
+            all_packages = [package_a, package_b, package_c, package_d]
             changed_packages = detect_changed_packages.get_changed_packages_and_dependents(all_packages)
             changed_package = list(changed_packages.keys())
 

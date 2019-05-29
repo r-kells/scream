@@ -2,6 +2,7 @@ import logging
 import os
 import subprocess
 
+from scream.commands.install import get_dependency_tree
 from scream.package import Package, PackageDoesNotExistException
 
 NO_GIT_ERROR_CODE = 128
@@ -30,10 +31,11 @@ def get_changed_packages_and_dependents(all_packages):
     for package_name, package in changed_packages.items():
         impacted_packages.update({package_name: package})
 
-    for package in all_packages:
-        for dependency in package.local_dependencies:
-            if dependency.package_name in changed_packages.keys():
-                impacted_packages.update({package.package_name: package})
+        for package in all_packages:
+            dependency_tree = get_dependency_tree(package)
+            for dependency in dependency_tree:
+                if dependency.package_name in changed_packages.keys():
+                    impacted_packages.update({package.package_name: package})
 
     if impacted_packages:
         logging.info("Packages that require testing:\n\t{}".format('\n\t'.join(
@@ -101,7 +103,7 @@ def get_unique_changed_packages(diffs):
         # Multiple files could have changed in the same package, but we only want it once.
         if package.package_name not in packages_changed:
             packages_changed.update({package.package_name: package})
-
+    print(packages_changed)
     return packages_changed
 
 

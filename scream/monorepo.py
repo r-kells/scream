@@ -66,6 +66,7 @@ def version_counter(pypi_packages):
         try:
             name, version = p.split("==")
         except Exception:
-            continue
+            name = p.split("==")[0]
+            version = 'LATEST'
         results[name].update([version])
     return results

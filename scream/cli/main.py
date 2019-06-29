@@ -107,6 +107,8 @@ class Scream(object):
 
         test(all_packages=self.monorepo.config.packages, package_name=args.name, dry_run=args.dry_run, all=args.all)
 
+        self.monorepo.validate_mono_repo()
+
     def install(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('package_name')

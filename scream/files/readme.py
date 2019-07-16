@@ -124,6 +124,8 @@ Packages that require testing:
 * `deploy <package-name>` - Runs deploy.py in your package directory.
 * `scream build` - Builds a python wheel and bundles it with all it's dependencies as wheels.
 
+- `-v` will enable verbose logs.
+
 ## Quickstart
 > By default packages are tested against python 3.7.x, which means you have it available on your PATH.
 If you about different versions, please see the [configuration options](#Configuration).

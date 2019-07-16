@@ -11,7 +11,7 @@ from scream.monorepo import Monorepo
 from scream.package import PackageDoesNotExistException, PackageNamingException, validate_package_name
 
 DESCRIPTION = "An opinionated CLI tool for Python monorepo MGMT."
-USAGE = """scream <command> [<args>]
+USAGE = """scream <command> [<args>] [-v]
 
 Commands:
     init                    - Run this first. Initiates a monorepo in an empty directory.

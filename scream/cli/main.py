@@ -24,7 +24,9 @@ Commands:
 
 
 class CustomFormatter(logging.Formatter):
-    """Logging Formatter to add colors and count warning / errors"""
+    """Logging Formatter configure a different format for INFO vs. other log levels.
+    INFO formatting is used for communicating informative messages to the user.
+    """
 
     FORMATS = {
         logging.INFO: "%(msg)s",

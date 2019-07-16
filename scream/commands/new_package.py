@@ -13,7 +13,7 @@ def new_package(d, namespaces, package_name):
         package_name (str): the package name.
 
     Example:
-        scream new --name=example_pkg
+        scream new example_pkg
     """
     # For differences in namespace package naming requirements see...
     # https://github.com/pypa/sample-namespace-packages/tree/master/pkgutil

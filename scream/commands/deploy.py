@@ -9,7 +9,7 @@ from .install import install
 def deploy_packages(all_packages=None, package_name=None):
     """
     Run a deploy script.
-    For packages that have changed or if your dependencies have changed (or manually specified by --name=).
+    For packages that have changed or if your dependencies have changed (or manually specified by --package-name=).
     """
 
     if package_name is None:

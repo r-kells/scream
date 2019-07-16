@@ -91,10 +91,10 @@ Packages that require testing:
 ## Commands
 
 * `scream init` - Run this first. Initiates a monorepo in an empty directory.
-* `scream new <package_name>` - Creates new template package.
+* `scream new <package-name>` - Creates new template package.
 * `scream test [--dry-run][--all]` - Tests packages and package dependents that have changed.
-* `scream install <package_name>` - Installs a package.
-* `deploy <package_name>` - Runs deploy.py in your package directory.
+* `scream install <package-name>` - Installs a package.
+* `deploy <package-name>` - Runs deploy.py in your package directory.
 * `scream build` - Builds a python wheel and bundles it with all it's dependencies as wheels. (TODO)
 
 ## Quickstart

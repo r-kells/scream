@@ -58,7 +58,7 @@ class TestCliTest(Base.TestNewMonorepoGitInit):
     """Make sure all `scream test` commands run, with or without any packages existing.
     """
     test = ["scream", "test"]
-    test_package = ["scream", "test", "--name", "company_packagea", "--dry-run"]
+    test_package = ["scream", "test", "--package-name", "company_packagea", "--dry-run"]
     test_dry = ["scream", "test", "--dry-run"]
     test_all = ["scream", "test", "--all", "--dry-run"]
 
@@ -129,7 +129,7 @@ class TestCliInstall(Base.TestNewMonorepoGitInit):
 class TestCliDeploy(Base.TestNewMonorepoGitInit):
     """Make sure all `scream install` commands run, with or without any packages existing.
     """
-    deploy_cmd = ["scream", "deploy", "--package_name", "packagea"]
+    deploy_cmd = ["scream", "deploy", "--package-name", "packagea"]
     deploy_all_cmd = ["scream", "deploy"]
 
     def test_deploy_no_packages_created(self):

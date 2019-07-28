@@ -60,7 +60,7 @@ class Scream(File):
                 try:
                     p = Package(package_dir=package)
                 except PackageDoesNotExistException:
-                    logging.warning("{} is not a valid package. Skipping...".format(package))
+                    logging.debug("{} is not a valid package. Skipping...".format(package))
                 else:
                     packages.append(p)
 

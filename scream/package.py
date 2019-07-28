@@ -2,7 +2,6 @@ try:
     import configparser
 except ImportError:
     import ConfigParser as configparser
-import logging
 import os
 import sys
 
@@ -67,7 +66,6 @@ class Package:
             other_dependencies = []
 
         requirements = self.get_requirements()
-
         try:
             for pkg in requirements:
                 if pkg == self.package_name:
@@ -90,7 +88,7 @@ class Package:
         """
         Parse `setup.cfg` for a given package return a config object to parse further.
 
-        pakages setup is configured in `setup.cfg` rather than setup.py
+        packages setup is configured in `setup.cfg` rather than setup.py
 
         Args:
             package_dir (str)
@@ -100,7 +98,6 @@ class Package:
         """
         config_path = os.path.join(package_dir, 'setup.cfg')
         if not os.path.isfile(config_path):
-            logging.debug("`{}` is not a package.".format(package_dir))
             return None
 
         config = configparser.ConfigParser()

@@ -30,7 +30,7 @@ class CustomFormatter(logging.Formatter):
 
     FORMATS = {
         logging.INFO: "%(msg)s",
-        "DEFAULT": "%(levelname)s: %(filename)s %(funcName)s() line: %(lineno)s %(msg)s",
+        "DEFAULT": "%(levelname)s: %(msg)s",
     }
 
     def format(self, record):

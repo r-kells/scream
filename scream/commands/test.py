@@ -58,5 +58,6 @@ def build_test_cmd(all_packages=None, package_name=None, all=False, dry_run=Fals
 
     if dry_run:
         return
-    logging.info(cmd)
+
+    logging.debug("Test command: {}".format(cmd))
     return cmd

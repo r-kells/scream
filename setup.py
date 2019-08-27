@@ -20,7 +20,7 @@ setuptools.setup(
         "flake8==3.6.0",
         "pep8-naming==0.7.0",
         "coverage",
-        "tox==3.5.3",
+        "tox==3.13.2",
         "wheel"
     ],
     entry_points={

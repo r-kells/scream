@@ -119,7 +119,7 @@ Packages that require testing:
 ## Commands
 
 * `scream new <package-name>` - Creates new template package.
-* `scream test [--dry-run][--all]` - Tests packages and package dependents that have changed.
+* `scream test [--dry-run][--all][-parallel]` - Tests packages and package dependents that have changed.
 * `scream install <package-name>` - Installs a package.
 * `deploy <package-name>` - Runs deploy.py in your package directory.
 * `scream build` - Builds a python wheel and bundles it with all it's dependencies as wheels.
@@ -144,8 +144,8 @@ Created project `com.packagea`
 > scream new com.packageb
 Created project `com.packageb`
 
-> scream test --all
-Running tests...
+> scream test --all --parallel
+Running tests... (Using all cores)
 
 > coverage report
 ```

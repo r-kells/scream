@@ -123,13 +123,15 @@ class Scream(object):
                             help="Print what would be tested, but don't run tests.")
         parser.add_argument('--all', dest='all', default=False, action='store_true',
                             help="Test all packages, ragardless of git status.")
+        parser.add_argument('--parallel', dest='parallel', default=False, action='store_true',
+                            help="Should tests run in parallel.")
 
         args = parser.parse_args(sys.argv[2:])
         if args.verbose:
             logger.setLevel(logging.DEBUG)
 
         test(all_packages=self.monorepo.config.packages, package_name=args.package_name, dry_run=args.dry_run,
-             all=args.all)
+             all=args.all, parallel=args.parallel)
 
         self.monorepo.validate_mono_repo()
 

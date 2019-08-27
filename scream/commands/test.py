@@ -4,8 +4,10 @@ import sys
 
 from scream.detect_changed_packages import get_changed_packages_and_dependents
 
+PARALLEL_CMD = ['-p', 'all']
 
-def test(all_packages=None, package_name=None, all=False, dry_run=False):
+
+def test(all_packages=None, package_name=None, all=False, dry_run=False, parallel=False):
     """Tests all packages that have changed, or packages who's dependencies have changed.
     The tox testing environments can support running package tests against different python versions, etc.
     Args:
@@ -15,7 +17,7 @@ def test(all_packages=None, package_name=None, all=False, dry_run=False):
         all (bool): if True, immediately test all packages (overrides dry-run).
 
     """
-    cmd = build_test_cmd(all_packages, package_name, all, dry_run)
+    cmd = build_test_cmd(all_packages, package_name, all, dry_run, parallel)
     if cmd:
         result = subprocess.check_call(cmd)
         # Explicitly fail if tests dont succeed, since this call is run in a subprocess.
@@ -23,12 +25,13 @@ def test(all_packages=None, package_name=None, all=False, dry_run=False):
             sys.exit(1)
 
 
-def build_test_cmd(all_packages=None, package_name=None, all=False, dry_run=False):
+def build_test_cmd(all_packages=None, package_name=None, all=False, dry_run=False, parallel=False):
     cmd = []
 
     if package_name is not None:
         logging.info("Testing {}".format(package_name))
         cmd = ["tox", "-e", package_name]
+
     elif all:
         logging.info("Testing all packages...")
         cmd = ["tox"]
@@ -50,7 +53,11 @@ def build_test_cmd(all_packages=None, package_name=None, all=False, dry_run=Fals
             toxenvs_to_test_str = ','.join(toxenvs_to_test_list)
             cmd = ["tox", "-e", toxenvs_to_test_str]
 
+    if parallel:
+        cmd.extend(PARALLEL_CMD)
+
     if dry_run:
         return
 
+    logging.debug("Test command: {}".format(cmd))
     return cmd

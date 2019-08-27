@@ -24,9 +24,10 @@ class TestPackages(Base.TestNewMonorepoGitInit):
 
     def test_test_commands(self):
         cmds_and_expected_output = [
-            ({"all_packages": [self.package_a], "package_name": None}, ['tox', '-e', 'py37-company_packagea']),
+            ({"all_packages": [self.package_a], "package_name": None, 'parallel': True},
+             ['tox', '-e', 'py37-company_packagea', '-p', 'all']),
             ({"all_packages": [self.package_a], "package_name": None, "dry_run": True}, None),
-            ({"all": True}, ['tox']),
+            ({"all": True, 'parallel': True}, ['tox', '-p', 'all']),
             ({"package_name": "packagea"}, ['tox', '-e', 'packagea']),
             ({"package_name": "packagea", "all": True}, ['tox', '-e', 'packagea'])
         ]

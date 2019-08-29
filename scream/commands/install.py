@@ -45,14 +45,15 @@ def install(package, test=False):
 
 
 def _install_package(package, test):
-    """
-    Tries to install `package` from local dir.
+    """Wrapper for pip install
 
-    Args:
-        package (str): a package name to install
+    Notes:
+        Would be nice to support passing any pip commands?
     """
+
     test_cmd = "{}[test]".format(package.package_dir)
     cmd = ["pip", "install"]
+
     if test:
         cmd.append(test_cmd)
     else:

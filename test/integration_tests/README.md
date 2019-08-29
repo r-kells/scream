@@ -1,0 +1,1 @@
+These commands sanity check that all cli commands (and their options) run without unexpected exceptions.

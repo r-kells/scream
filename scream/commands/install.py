@@ -12,12 +12,13 @@ class PackageInstallationException(Exception):
     pass
 
 
-def install(package):
+def install(package, test=False):
     """
     Installs individual packages and their dependents.
 
     Args:
         package (str): A local package name. Ex: `company_examplea`.
+        test (bool): Installs optional requirements `test` packages.
 
     """
     package = Package(package_name=package)
@@ -25,7 +26,7 @@ def install(package):
 
     # Try to install package directly, if fails install dependencies first.
     try:
-        _install_package(package)
+        _install_package(package, test)
         return
     except NoMatchingDistributionException:
         # Must need to install dependencies first.
@@ -35,22 +36,30 @@ def install(package):
 
     for p in dependency_tree:
         logging.info("Installing {}.".format(p.package_name))
-        _install_package(p)
+        _install_package(p, test)
 
     # finally install the package that was originally requested.
-    _install_package(package)
+    _install_package(package, test)
 
     logging.info("Installation complete.")
 
 
-def _install_package(package):
-    """
-    Tries to install `package` from local dir.
+def _install_package(package, test):
+    """Wrapper for pip install
 
-    Args:
-        package (str): a package name to install
+    Notes:
+        Would be nice to support passing any pip commands?
     """
-    run(["pip", "install", "-e", package.package_dir])
+
+    test_cmd = "{}[test]".format(package.package_dir)
+    cmd = ["pip", "install"]
+
+    if test:
+        cmd.append(test_cmd)
+    else:
+        cmd.append(package.package_dir)
+
+    run(cmd)
 
 
 def run(cmd):

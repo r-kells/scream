@@ -61,6 +61,7 @@ class TestCliTest(Base.TestNewMonorepoGitInit):
     test_package = ["scream", "test", "--package-name", "company_packagea", "--dry-run"]
     test_dry = ["scream", "test", "--dry-run"]
     test_all = ["scream", "test", "--all", "--dry-run"]
+    test_parallel = ["scream", "test", "--all", "--dry-run", "--parallel"]
 
     def test_test_no_packages_created(self):
 
@@ -85,7 +86,7 @@ class TestCliTest(Base.TestNewMonorepoGitInit):
 
             subprocess.call(["git", "add", "."])
 
-        cmds = [self.test_package, self.test_all, self.test_dry]
+        cmds = [self.test_package, self.test_all, self.test_dry, self.test_parallel]
 
         with chdir(self.TMP_DIR):
             for cmd in cmds:
@@ -98,14 +99,20 @@ class TestCliTest(Base.TestNewMonorepoGitInit):
 class TestCliInstall(Base.TestNewMonorepoGitInit):
     """Make sure all `scream install` commands run, with or without any packages existing.
     """
-    cmd = ["scream", "install", "com_packagea"]
+    basic_cmd = ["scream", "install", "com_packagea"]
+    test_cmd = ["scream", "install", "com_packagea", "--test"]
+    test_cmd_short = ["scream", "install", "com_packagea", "-t"]
+
+    install_cmds = [basic_cmd, test_cmd, test_cmd_short
+                    ]
 
     def test_install_no_packages_created(self):
-        with chdir(self.TMP_DIR):
-            with mock.patch.object(sys, "argv", self.cmd):
-                with self.assertRaises(SystemExit) as err:
-                    scream.Scream()
-                self.assertEqual(err.exception.code, 1)
+        for cmd in self.install_cmds:
+            with chdir(self.TMP_DIR):
+                with mock.patch.object(sys, "argv", cmd):
+                    with self.assertRaises(SystemExit) as err:
+                        scream.Scream()
+                    self.assertEqual(err.exception.code, 1)
 
     def test_install_with_packages_created(self):
         new_cmd = ["scream", "new", "com.packagea"]
@@ -119,18 +126,20 @@ class TestCliInstall(Base.TestNewMonorepoGitInit):
 
             subprocess.call(["git", "add", "."])
 
-        with chdir(self.TMP_DIR):
-            with mock.patch.object(sys, "argv", self.cmd):
-                with self.assertRaises(SystemExit) as err:
-                    scream.Scream()
-                self.assertEqual(err.exception.code, 0)
+        for cmd in self.install_cmds:
+            with chdir(self.TMP_DIR):
+                with mock.patch.object(sys, "argv", cmd):
+                    with self.assertRaises(SystemExit) as err:
+                        scream.Scream()
+                    self.assertEqual(err.exception.code, 0)
 
 
 class TestCliDeploy(Base.TestNewMonorepoGitInit):
-    """Make sure all `scream install` commands run, with or without any packages existing.
+    """Make sure all `scream deploy` commands run, with or without any packages existing.
     """
     deploy_cmd = ["scream", "deploy", "--package-name", "packagea"]
     deploy_all_cmd = ["scream", "deploy"]
+    deploy_cmds = [deploy_cmd, deploy_all_cmd]
 
     def test_deploy_no_packages_created(self):
         with chdir(self.TMP_DIR):
@@ -140,25 +149,20 @@ class TestCliDeploy(Base.TestNewMonorepoGitInit):
                 self.assertEqual(err.exception.code, 0)
 
     def test_deploy_with_packages_created(self):
-        install_cmd = ["scream", "new", "com.packagea"]
+        create = ["scream", "new", "com.packagea"]
 
         with chdir(self.TMP_DIR):
             # Add a package.
-            with mock.patch.object(sys, "argv", install_cmd):
+            with mock.patch.object(sys, "argv", create):
                 with self.assertRaises(SystemExit) as err:
                     scream.Scream()
                 self.assertEqual(err.exception.code, 0)
 
             subprocess.call(["git", "add", "."])
 
-        with chdir(self.TMP_DIR):
-            with mock.patch.object(sys, "argv", self.deploy_cmd):
-                with self.assertRaises(SystemExit) as err:
-                    scream.Scream()
-                self.assertEqual(err.exception.code, 0)
-
-        with chdir(self.TMP_DIR):
-            with mock.patch.object(sys, "argv", self.deploy_all_cmd):
-                with self.assertRaises(SystemExit) as err:
-                    scream.Scream()
-                self.assertEqual(err.exception.code, 0)
+        for cmd in self.deploy_cmds:
+            with chdir(self.TMP_DIR):
+                with mock.patch.object(sys, "argv", cmd):
+                    with self.assertRaises(SystemExit) as err:
+                        scream.Scream()
+                    self.assertEqual(err.exception.code, 0)

@@ -19,8 +19,10 @@ packages = find:
 python_requires = 3.7
 {install_requires}
 
-# dependency_links =
-#     git+ssh://git@github.com/example_github_user/example_github_repo.git@master#egg=example-local-dependency-0#subdirectory=example_local_dependency
+[options.extras_require]
+# Will be automatically installed when using scream test...
+test =
+    mock
 
 [options.packages.find]
 exclude =
@@ -42,7 +44,7 @@ class SetupCfg(File):
         self.package_name = package_name
 
         if dependencies is None:
-            self.install_requires = "# install_requires = company_package"
+            self.install_requires = "#install_requires =\n#\tcompany_package"
         else:
             self.install_requires = self.install_requires_tmp.format("\n    ".join(dependencies))
 

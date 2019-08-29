@@ -137,15 +137,16 @@ class Scream(object):
 
     def install(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument("-v", "--verbose", action='store_true', help="enable debug logging")
+        parser.add_argument("-v", "--verbose", action='store_true', help="Enable debug logging.")
         parser.add_argument('package_name')
+        parser.add_argument('-t', '--test', dest='test', action='store_true', help="Install testing dependencies.")
 
         args = parser.parse_args(sys.argv[2:])
         if args.verbose:
             logger.setLevel(logging.DEBUG)
 
         try:
-            install(args.package_name)
+            install(args.package_name, args.test)
         except PackageDoesNotExistException:
             logging.error("Package doesn't exit. Packages are named '<namespace(s)>_<name>'")
             sys.exit(1)

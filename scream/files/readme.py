@@ -120,7 +120,7 @@ Packages that require testing:
 
 * `scream new <package-name>` - Creates new template package.
 * `scream test [--dry-run][--all][-parallel]` - Tests packages and package dependents that have changed.
-* `scream install <package-name>` - Installs a package.
+* `scream install <package-name>[--test]` - Installs a package. `--test` installs testing dependencies.
 * `deploy <package-name>` - Runs deploy.py in your package directory.
 * `scream build` - Builds a python wheel and bundles it with all it's dependencies as wheels.
 
